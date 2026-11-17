@@ -1,0 +1,30 @@
+﻿# SQL Server installer
+*.box
+
+# .NET build files
+**/bin/
+**/obj/
+**/publish/
+
+# Node.js
+**/node_modules/
+**/dist/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+**/secrets.json
+**/appsettings.*.json
+
+# IDE files
+.vs/
+.idea/
+.vscode/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Uploaded customer documents
+**/Uploads/
