@@ -1,4 +1,4 @@
-# InsureFlow -â‚¬â€œ Smart Insurance Management System
+# InsureFlow - Smart Insurance Management System
 
 
 
@@ -80,17 +80,17 @@ InsureFlow simplifies insurance policy management and claim processing through a
 
 
 
-\- SmartInsurance.Client -â‚¬â€œ React frontend
+\- SmartInsurance.Client -Ã¢â€šÂ¬Ã¢â‚¬Å“ React frontend
 
-\- SmartInsurance.API -â‚¬â€œ ASP.NET Core backend
+\- SmartInsurance.API -Ã¢â€šÂ¬Ã¢â‚¬Å“ ASP.NET Core backend
 
-\- Controllers -â‚¬â€œ API endpoints
+\- Controllers -Ã¢â€šÂ¬Ã¢â‚¬Å“ API endpoints
 
-\- Models and DTOs -â‚¬â€œ Application data
+\- Models and DTOs -Ã¢â€šÂ¬Ã¢â‚¬Å“ Application data
 
-\- Data -â‚¬â€œ Database context
+\- Data -Ã¢â€šÂ¬Ã¢â‚¬Å“ Database context
 
-\- Services -â‚¬â€œ Business logic
+\- Services -Ã¢â€šÂ¬Ã¢â‚¬Å“ Business logic
 
 
 
