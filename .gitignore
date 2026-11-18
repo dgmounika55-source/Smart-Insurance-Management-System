@@ -28,3 +28,8 @@
 
 # Uploaded customer documents
 **/Uploads/
+
+# Local development databases
+*.db
+*.db-shm
+*.db-wal

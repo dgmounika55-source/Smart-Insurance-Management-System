@@ -34,6 +34,9 @@ public class DashboardController : ControllerBase
         var rejectedClaims = await _context.Claims
             .CountAsync(c => c.Status == "Rejected");
 
+        var cancelledClaims = await _context.Claims
+            .CountAsync(c => c.Status == "Cancelled");
+
         var totalClaimAmount = await _context.Claims
             .SumAsync(c => (decimal?)c.ClaimAmount) ?? 0;
 
@@ -49,6 +52,7 @@ public class DashboardController : ControllerBase
             pendingClaims,
             approvedClaims,
             rejectedClaims,
+            cancelledClaims,
             totalClaimAmount,
             approvedClaimAmount
         });

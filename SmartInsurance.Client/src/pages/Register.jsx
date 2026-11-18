@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { ShieldCheck, User, Mail, LockKeyhole, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../services/authService";
@@ -18,7 +18,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   function update(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((previous) => ({ ...previous, [e.target.name]: e.target.value }));
   }
 
   async function handleSubmit(e) {

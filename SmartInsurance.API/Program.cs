@@ -8,7 +8,12 @@ using SmartInsurance.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddScoped<SmartInsurance.API.Services.NotificationService>();
 builder.Services.AddOpenApi();
 
@@ -22,9 +27,20 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Use SQLite during development and SQL Server in production.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        options.UseSqlite(
+            builder.Configuration.GetConnectionString("DevelopmentConnection"));
+    }
+    else
+    {
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection"));
+    }
+});
 
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
@@ -74,18 +90,30 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Initialize the temporary development database and roles.
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<ApplicationDbContext>();
+
+    await dbContext.Database.EnsureCreatedAsync();
+
+    await RoleSeeder.SeedRolesAsync(scope.ServiceProvider);
+    await ClaimsManagerSeeder.SeedAsync(scope.ServiceProvider);
+    await AdminSeeder.SeedAsync(scope.ServiceProvider);
+    await PolicySeeder.SeedPoliciesAsync(dbContext);
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors("ReactFrontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

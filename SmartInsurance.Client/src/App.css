@@ -611,3 +611,6 @@ tbody tr:last-child td { border-bottom: 0; }
   }
 }
 
+
+.progress-cancelled { background: #8b7de0; }
+.purple-dot { background: #8b7de0; }

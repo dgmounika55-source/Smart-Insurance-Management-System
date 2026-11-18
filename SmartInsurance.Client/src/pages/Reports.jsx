@@ -109,6 +109,7 @@ export default function Reports() {
             <p>Pending claims: <strong>{data.pendingClaims}</strong></p>
             <p>Approved claims: <strong>{data.approvedClaims}</strong></p>
             <p>Rejected claims: <strong>{data.rejectedClaims}</strong></p>
+            <p>Cancelled claims: <strong>{data.cancelledClaims}</strong></p>
           </div>
         </>
       )}

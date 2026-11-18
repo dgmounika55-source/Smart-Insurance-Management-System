@@ -427,6 +427,50 @@ namespace SmartInsurance.API.Migrations
                     b.ToTable("CustomerPolicies");
                 });
 
+            modelBuilder.Entity("SmartInsurance.API.Models.Notification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
+
+                    b.Property<int?>("ClaimId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("ClaimId");
+
+                    b.HasIndex("CustomerId", "IsRead", "CreatedAt");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("SmartInsurance.API.Models.Policy", b =>
                 {
                     b.Property<int>("PolicyId")
@@ -585,6 +629,24 @@ namespace SmartInsurance.API.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Policy");
+                });
+
+            modelBuilder.Entity("SmartInsurance.API.Models.Notification", b =>
+                {
+                    b.HasOne("SmartInsurance.API.Models.Claim", "Claim")
+                        .WithMany()
+                        .HasForeignKey("ClaimId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SmartInsurance.API.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Claim");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("SmartInsurance.API.Models.Claim", b =>

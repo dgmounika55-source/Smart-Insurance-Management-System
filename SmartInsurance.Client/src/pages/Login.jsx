@@ -26,12 +26,7 @@ export default function Login() {
 
       navigate(data.role === "Customer" ? "/customer-dashboard" : "/");
     } catch (err) {
-      const message =
-        err.response?.data?.message ||
-        err.response?.data?.errors?.join(", ") ||
-        "Unable to log in. Please check your details or try again.";
-
-      setError(message);
+      setError(err.response?.data?.message || "Login failed. Please check your email and password and try again.");
     } finally {
       setLoading(false);
     }
@@ -87,7 +82,7 @@ export default function Login() {
         </p>
       </div>
 
-      <p className="auth-footer">© 2026 InsureFlow. Secure insurance management.</p>
+      <p className="auth-footer">Ã‚Â© 2026 InsureFlow. Secure insurance management.</p>
     </div>
   );
 }
