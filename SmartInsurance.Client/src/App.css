@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 * { box-sizing: border-box; }
 body { margin: 0; font-family: 'DM Sans', sans-serif; color: #202b3c; background: #f7f8fc; }
@@ -929,5 +929,287 @@ tbody tr:last-child td { border-bottom: 0; }
   .checkout-footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* =========================================
+   INSUREFLOW - PREMIUM POLICY MANAGEMENT
+========================================= */
+
+.page-section .panel {
+  border-radius: 16px;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 5px 22px rgba(31, 50, 91, 0.045);
+  overflow: hidden;
+}
+
+.page-section .page-title-row {
+  margin-bottom: 28px;
+}
+
+.page-section .page-title-row h1 {
+  font-size: 27px;
+  letter-spacing: -0.8px;
+  color: #172554;
+}
+
+.page-section .page-title-row p {
+  font-size: 13px;
+  color: #8490a5;
+}
+
+.page-section .page-toolbar {
+  min-height: 82px;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: linear-gradient(120deg, #ffffff, #f9fbff);
+  border-bottom: 1px solid #edf1f7;
+}
+
+.page-section .page-toolbar > span {
+  margin-left: auto;
+  color: #7c89a1;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.page-section .page-toolbar .search-box {
+  width: min(320px, 100%);
+  min-height: 43px;
+  background: #ffffff;
+  border: 1px solid #e5eaf3;
+  border-radius: 10px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.page-section .page-toolbar .search-box:focus-within {
+  border-color: #7894ed;
+  box-shadow: 0 0 0 3px rgba(73, 107, 215, .10);
+}
+
+.page-section .page-toolbar .search-box input {
+  font-size: 12px;
+  color: #344056;
+}
+
+.page-section .page-toolbar .primary-button {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #5275e5, #3156c5);
+  box-shadow: 0 6px 15px rgba(65, 98, 207, .22);
+  font-size: 12px;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.page-section .page-toolbar .primary-button:hover {
+  background: linear-gradient(135deg, #4569d9, #294bb4);
+  transform: translateY(-1px);
+  box-shadow: 0 9px 19px rgba(65, 98, 207, .27);
+}
+
+.page-section .table-wrap table {
+  min-width: 760px;
+}
+
+.page-section .table-wrap thead {
+  background: #f7f9fd;
+}
+
+.page-section .table-wrap th {
+  padding: 17px 15px;
+  color: #8792a7;
+  font-size: 10px;
+  letter-spacing: .8px;
+}
+
+.page-section .table-wrap td {
+  padding: 18px 15px;
+  color: #64718a;
+  font-size: 12px;
+  border-bottom: 1px solid #f0f2f7;
+}
+
+.page-section .table-wrap tbody tr {
+  transition: background .18s;
+}
+
+.page-section .table-wrap tbody tr:hover {
+  background: #f8faff;
+}
+
+.page-section .table-wrap .claim-id {
+  color: #5270cf;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.page-section .table-wrap .customer-name {
+  color: #293751;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.page-section .table-wrap .amount {
+  color: #34466c;
+  font-weight: 700;
+}
+
+.page-section .table-wrap .status {
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 10px;
+  letter-spacing: .1px;
+}
+
+.page-section .table-wrap .status.approved {
+  background: #e9f8f0;
+  color: #24865b;
+}
+
+.page-section .table-wrap .status.rejected {
+  background: #fff0f0;
+  color: #c65c66;
+}
+
+/* Admin table action buttons */
+
+.page-section .secondary-button,
+.page-section .table-wrap .checkout-fail-button {
+  width: auto;
+  min-height: 34px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all .2s;
+}
+
+.page-section .secondary-button {
+  border: 1px solid #dce5fa;
+  background: #f2f6ff;
+  color: #4566c5;
+}
+
+.page-section .secondary-button:hover {
+  border-color: #aebff1;
+  background: #e8efff;
+  transform: translateY(-1px);
+}
+
+.page-section .table-wrap .checkout-fail-button {
+  border: 1px solid #f4dada;
+  background: #fff7f7;
+  color: #c15e67;
+}
+
+.page-section .table-wrap .checkout-fail-button:hover:not(:disabled) {
+  border-color: #edb9bd;
+  background: #ffeded;
+  transform: translateY(-1px);
+}
+
+.page-section .table-wrap .checkout-fail-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* Add/Edit Policy modal */
+
+.page-section .checkout-modal form {
+  margin-top: 24px;
+}
+
+.page-section .checkout-modal form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #3d4a63;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.page-section .checkout-modal form input,
+.page-section .checkout-modal form select {
+  width: 100%;
+  min-height: 45px;
+  padding: 0 13px;
+  border: 1px solid #e0e6f0;
+  border-radius: 10px;
+  outline: none;
+  background: #fafbfe;
+  color: #293751;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.page-section .checkout-modal form input:hover,
+.page-section .checkout-modal form select:hover {
+  border-color: #c4d0e8;
+}
+
+.page-section .checkout-modal form input:focus,
+.page-section .checkout-modal form select:focus {
+  border-color: #6683e0;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(73, 107, 215, .10);
+}
+
+.page-section .checkout-modal form input::placeholder {
+  color: #a5afbf;
+  font-weight: 400;
+}
+
+.page-section .checkout-modal form select {
+  cursor: pointer;
+}
+
+.page-section .checkout-modal form .checkout-actions {
+  margin-top: 10px;
+}
+
+.page-section .checkout-modal form .checkout-pay-button {
+  background: linear-gradient(135deg, #5275e5, #3156c5);
+  box-shadow: 0 6px 15px rgba(65, 98, 207, .20);
+}
+
+.page-section .checkout-modal form .checkout-pay-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4569d9, #294bb4);
+}
+
+.page-section .checkout-modal form .checkout-fail-button {
+  min-height: 43px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+/* Responsive policy management */
+
+@media (max-width: 760px) {
+  .page-section .page-toolbar {
+    align-items: stretch;
+  }
+
+  .page-section .page-toolbar .search-box {
+    width: 100%;
+  }
+
+  .page-section .page-toolbar > span {
+    margin-left: 0;
+  }
+
+  .page-section .page-toolbar .primary-button {
+    justify-content: center;
+  }
+
+  .page-section .checkout-modal {
+    padding: 22px;
   }
 }

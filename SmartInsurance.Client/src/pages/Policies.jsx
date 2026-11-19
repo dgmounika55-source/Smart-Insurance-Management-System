@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
-import { ShieldCheck, Search, ShoppingCart, CreditCard, X } from "lucide-react";
+import {
+  ShieldCheck, Search, ShoppingCart, CreditCard, X, Plus, Pencil, Ban
+} from "lucide-react";
 import api from "../services/api";
+
+const emptyForm = {
+  policyName: "",
+  policyType: "Health",
+  premiumAmount: "",
+  coverageAmount: "",
+  durationMonths: 12,
+};
 
 export default function Policies() {
   const [policies, setPolicies] = useState([]);
@@ -12,8 +22,14 @@ export default function Policies() {
   const [paymentSession, setPaymentSession] = useState(null);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
 
+  const [showForm, setShowForm] = useState(false);
+  const [editingPolicy, setEditingPolicy] = useState(null);
+  const [form, setForm] = useState(emptyForm);
+  const [savingPolicy, setSavingPolicy] = useState(false);
+
   const userRole = localStorage.getItem("userRole");
   const isCustomer = userRole === "Customer";
+  const isAdmin = userRole === "Admin";
 
   async function fetchPolicies() {
     try {
@@ -40,6 +56,120 @@ export default function Policies() {
       currency: "INR",
       maximumFractionDigits: 0,
     }).format(amount ?? 0);
+  }
+
+  function openCreateForm() {
+    setEditingPolicy(null);
+    setForm(emptyForm);
+    setError("");
+    setMessage("");
+    setShowForm(true);
+  }
+
+  function openEditForm(policy) {
+    setEditingPolicy(policy);
+    setForm({
+      policyName: policy.policyName,
+      policyType: policy.policyType,
+      premiumAmount: policy.premiumAmount,
+      coverageAmount: policy.coverageAmount,
+      durationMonths: policy.durationMonths,
+    });
+    setError("");
+    setMessage("");
+    setShowForm(true);
+  }
+
+  function closeForm() {
+    if (savingPolicy) return;
+    setShowForm(false);
+    setEditingPolicy(null);
+    setForm(emptyForm);
+  }
+
+  function updateForm(event) {
+    const { name, value } = event.target;
+    setForm((current) => ({ ...current, [name]: value }));
+  }
+
+  async function savePolicy(event) {
+    event.preventDefault();
+
+    const payload = {
+      policyName: form.policyName.trim(),
+      policyType: form.policyType,
+      premiumAmount: Number(form.premiumAmount),
+      coverageAmount: Number(form.coverageAmount),
+      durationMonths: Number(form.durationMonths),
+    };
+
+    if (
+      !payload.policyName ||
+      payload.premiumAmount <= 0 ||
+      payload.coverageAmount <= 0 ||
+      payload.durationMonths <= 0 ||
+      !Number.isInteger(payload.durationMonths)
+    ) {
+      setError("Enter valid policy details. Duration must be a positive whole number.");
+      return;
+    }
+
+    try {
+      setSavingPolicy(true);
+      setError("");
+      setMessage("");
+
+      if (editingPolicy) {
+        await api.put(`/policies/${editingPolicy.policyId}`, payload);
+        setMessage("Policy updated successfully.");
+      } else {
+        const startDate = new Date();
+        const endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + payload.durationMonths);
+
+        await api.post("/policies", {
+          ...payload,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        });
+        setMessage("New policy created successfully.");
+      }
+
+      setShowForm(false);
+      setEditingPolicy(null);
+      setForm(emptyForm);
+      await fetchPolicies();
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        "Unable to save policy. Please try again."
+      );
+    } finally {
+      setSavingPolicy(false);
+    }
+  }
+
+  async function deactivatePolicy(policy) {
+    if (policy.status !== "Active") return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to deactivate "${policy.policyName}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setError("");
+      setMessage("");
+      await api.delete(`/policies/${policy.policyId}`);
+      setMessage(`${policy.policyName} has been deactivated.`);
+      await fetchPolicies();
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        "Unable to deactivate policy. Please try again."
+      );
+    }
   }
 
   async function handlePurchase(policy) {
@@ -123,14 +253,25 @@ export default function Policies() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
+
           <span>{policies.length} policies</span>
+
+          {isAdmin && (
+            <button
+              type="button"
+              className="primary-button"
+              onClick={openCreateForm}
+            >
+              <Plus size={16} /> Add Policy
+            </button>
+          )}
         </div>
 
         {message && <p className="success-message" role="status">{message}</p>}
         {error && <p className="auth-error" role="alert">{error}</p>}
         {loading && <p>Loading policies...</p>}
 
-        {!loading && !error && (
+        {!loading && (
           <div className="table-wrap">
             <table>
               <thead>
@@ -142,6 +283,7 @@ export default function Policies() {
                   <th>COVERAGE</th>
                   <th>STATUS</th>
                   {isCustomer && <th>ACTION</th>}
+                  {isAdmin && <th>MANAGE</th>}
                 </tr>
               </thead>
               <tbody>
@@ -150,9 +292,7 @@ export default function Policies() {
                     <td className="claim-id">{policy.policyNumber}</td>
                     <td className="customer-name">{policy.policyName}</td>
                     <td>{policy.policyType}</td>
-                    <td className="amount">
-                      {formatCurrency(policy.premiumAmount)}
-                    </td>
+                    <td className="amount">{formatCurrency(policy.premiumAmount)}</td>
                     <td>{formatCurrency(policy.coverageAmount)}</td>
                     <td>
                       <span className={`status ${
@@ -161,6 +301,7 @@ export default function Policies() {
                         {policy.status}
                       </span>
                     </td>
+
                     {isCustomer && (
                       <td>
                         <button
@@ -179,12 +320,34 @@ export default function Policies() {
                         </button>
                       </td>
                     )}
+
+                    {isAdmin && (
+                      <td>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button
+                            type="button"
+                            className="secondary-button"
+                            onClick={() => openEditForm(policy)}
+                          >
+                            <Pencil size={14} /> Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="checkout-fail-button"
+                            disabled={policy.status !== "Active"}
+                            onClick={() => deactivatePolicy(policy)}
+                          >
+                            <Ban size={14} /> Deactivate
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
 
                 {filteredPolicies.length === 0 && (
                   <tr>
-                    <td colSpan={isCustomer ? 7 : 6}>
+                    <td colSpan={isCustomer ? 7 : isAdmin ? 7 : 6}>
                       {policies.length === 0
                         ? "No policies available yet."
                         : "No matching policies found."}
@@ -196,6 +359,131 @@ export default function Policies() {
           </div>
         )}
       </div>
+
+      {showForm && (
+        <div className="checkout-overlay">
+          <div className="checkout-modal" style={{ maxWidth: 520 }}>
+            <div className="checkout-header">
+              <div className="checkout-brand">
+                <div className="checkout-brand-icon">
+                  <ShieldCheck size={22} />
+                </div>
+                <div>
+                  <strong>InsureFlow</strong>
+                  <span>Admin Policy Management</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="checkout-close"
+                onClick={closeForm}
+                disabled={savingPolicy}
+                aria-label="Close policy form"
+              >
+                <X size={19} />
+              </button>
+            </div>
+
+            <div className="checkout-title">
+              <span className="checkout-eyebrow">POLICY MANAGEMENT</span>
+              <h2>{editingPolicy ? "Edit Policy" : "Create New Policy"}</h2>
+              <p>Enter the insurance policy details below.</p>
+            </div>
+
+            <form onSubmit={savePolicy} style={{ display: "grid", gap: 14 }}>
+              <label>
+                Policy Name
+                <input
+                  name="policyName"
+                  value={form.policyName}
+                  onChange={updateForm}
+                  placeholder="e.g. Family Health Plan"
+                  maxLength={150}
+                  required
+                />
+              </label>
+
+              <label>
+                Policy Type
+                <select
+                  name="policyType"
+                  value={form.policyType}
+                  onChange={updateForm}
+                  required
+                >
+                  <option>Health</option>
+                  <option>Life</option>
+                  <option>Motor</option>
+                  <option>Travel</option>
+                  <option>Property</option>
+                  <option>Other</option>
+                </select>
+              </label>
+
+              <label>
+                Premium Amount (₹)
+                <input
+                  type="number"
+                  name="premiumAmount"
+                  min="1"
+                  step="0.01"
+                  value={form.premiumAmount}
+                  onChange={updateForm}
+                  required
+                />
+              </label>
+
+              <label>
+                Coverage Amount (₹)
+                <input
+                  type="number"
+                  name="coverageAmount"
+                  min="1"
+                  step="0.01"
+                  value={form.coverageAmount}
+                  onChange={updateForm}
+                  required
+                />
+              </label>
+
+              <label>
+                Duration (months)
+                <input
+                  type="number"
+                  name="durationMonths"
+                  min="1"
+                  step="1"
+                  value={form.durationMonths}
+                  onChange={updateForm}
+                  required
+                />
+              </label>
+
+              {error && <p className="auth-error" role="alert">{error}</p>}
+
+              <div className="checkout-actions">
+                <button
+                  type="submit"
+                  className="checkout-pay-button"
+                  disabled={savingPolicy}
+                >
+                  {savingPolicy
+                    ? "Saving..."
+                    : editingPolicy ? "Save Changes" : "Create Policy"}
+                </button>
+                <button
+                  type="button"
+                  className="checkout-fail-button"
+                  onClick={closeForm}
+                  disabled={savingPolicy}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {paymentSession && (
         <div className="checkout-overlay">
@@ -264,7 +552,9 @@ export default function Policies() {
                 disabled={paymentProcessing}
                 onClick={() => completePayment(true)}
               >
-                {paymentProcessing ? "Processing payment..." : `Pay ${formatCurrency(paymentSession.amount)}`}
+                {paymentProcessing
+                  ? "Processing payment..."
+                  : `Pay ${formatCurrency(paymentSession.amount)}`}
               </button>
               <button
                 type="button"
