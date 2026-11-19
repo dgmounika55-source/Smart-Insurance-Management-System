@@ -1,5 +1,7 @@
 ﻿import { useEffect, useState } from "react";
-import { ReceiptText, CheckCircle2, XCircle, Clock, CreditCard } from "lucide-react";
+import {
+  ReceiptText, CheckCircle2, XCircle, Clock, CreditCard, Eye, X
+} from "lucide-react";
 import api from "../services/api";
 
 const formatCurrency = (amount) =>
@@ -24,6 +26,7 @@ export default function PaymentHistory() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedPayment, setSelectedPayment] = useState(null);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -36,7 +39,6 @@ export default function PaymentHistory() {
         setLoading(false);
       }
     };
-
     fetchPayments();
   }, []);
 
@@ -47,18 +49,15 @@ export default function PaymentHistory() {
     (payment) => payment.status?.toLowerCase() === "failed"
   );
   const totalPaid = paidPayments.reduce(
-    (total, payment) => total + payment.amount,
+    (total, payment) => total + Number(payment.amount || 0),
     0
   );
 
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
-      case "paid":
-        return <CheckCircle2 size={15} />;
-      case "failed":
-        return <XCircle size={15} />;
-      default:
-        return <Clock size={15} />;
+      case "paid": return <CheckCircle2 size={15} />;
+      case "failed": return <XCircle size={15} />;
+      default: return <Clock size={15} />;
     }
   };
 
@@ -72,9 +71,7 @@ export default function PaymentHistory() {
             View and track all your insurance policy payment transactions.
           </p>
         </div>
-        <div className="stat-icon blue">
-          <ReceiptText size={23} />
-        </div>
+        <div className="stat-icon blue"><ReceiptText size={23} /></div>
       </section>
 
       {loading ? (
@@ -131,12 +128,13 @@ export default function PaymentHistory() {
                     <th>PAYMENT DATE</th>
                     <th>POLICY REFERENCE</th>
                     <th>STATUS</th>
+                    <th>ACTION</th>
                   </tr>
                 </thead>
                 <tbody>
                   {payments.length === 0 ? (
                     <tr>
-                      <td colSpan="6">No payment transactions found.</td>
+                      <td colSpan="7">No payment transactions found.</td>
                     </tr>
                   ) : (
                     payments.map((payment) => (
@@ -152,6 +150,15 @@ export default function PaymentHistory() {
                             {payment.status || "Pending"}
                           </span>
                         </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="payment-view-button"
+                            onClick={() => setSelectedPayment(payment)}
+                          >
+                            <Eye size={15} /> View Details
+                          </button>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -160,6 +167,84 @@ export default function PaymentHistory() {
             </div>
           </section>
         </>
+      )}
+
+      {selectedPayment && (
+        <div className="payment-details-overlay" onClick={() => setSelectedPayment(null)}>
+          <section
+            className="payment-details-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="payment-details-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="payment-details-header">
+              <div>
+                <p className="eyebrow">TRANSACTION INFORMATION</p>
+                <h2 id="payment-details-title">Payment Details</h2>
+              </div>
+              <button
+                type="button"
+                className="payment-details-close"
+                aria-label="Close payment details"
+                onClick={() => setSelectedPayment(null)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="payment-details-status">
+              <span className={`status ${selectedPayment.status?.toLowerCase() || "pending"}`}>
+                {getStatusIcon(selectedPayment.status)}
+                {selectedPayment.status || "Pending"}
+              </span>
+            </div>
+
+            <div className="payment-details-amount">
+              <span>Transaction Amount</span>
+              <strong>{formatCurrency(selectedPayment.amount)}</strong>
+            </div>
+
+            <div className="payment-details-grid">
+              <div>
+                <span>Transaction Reference</span>
+                <strong>{selectedPayment.transactionReference || "—"}</strong>
+              </div>
+              <div>
+                <span>Payment ID</span>
+                <strong>{selectedPayment.paymentId ?? "—"}</strong>
+              </div>
+              <div>
+                <span>Policy Name</span>
+                <strong>{selectedPayment.policyName || "—"}</strong>
+              </div>
+              <div>
+                <span>Policy Reference</span>
+                <strong>{selectedPayment.policyReference || "—"}</strong>
+              </div>
+              <div>
+                <span>Payment Method</span>
+                <strong>{selectedPayment.paymentMethod || "—"}</strong>
+              </div>
+              <div>
+                <span>Transaction Date</span>
+                <strong>{formatDate(selectedPayment.createdAt)}</strong>
+              </div>
+              <div>
+                <span>Payment Completion Date</span>
+                <strong>{formatDate(selectedPayment.paidAt)}</strong>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="payment-details-done"
+              onClick={() => setSelectedPayment(null)}
+            >
+              Close
+            </button>
+          </section>
+        </div>
       )}
     </>
   );

@@ -33,7 +33,7 @@ const formatDate = (date) =>
         month: "short",
         year: "numeric"
       })
-    : "Ã¢â‚¬â€";
+    : "ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â";
 
 const formatStatus = (status) => {
   if (status === "UnderReview") return "Under Review";
@@ -324,7 +324,7 @@ function AppLayout() {
           <div><h2>InsureFlow</h2><span>INSURANCE PLATFORM</span></div>
         </div>
 
-        <div className="workspace-label">WORKSPACE</div>
+        
         <nav className="nav-menu">
           {isStaff ? (
             <>
@@ -390,10 +390,7 @@ function AppLayout() {
 
       <main className="main-content">
         <header className="topbar">
-          <div className="breadcrumb">
-            <span>Workspace</span><ChevronRight size={15} />
-            <strong>Insurance Management</strong>
-          </div>
+          <div className="breadcrumb"></div>
           <div className="top-actions">
             <div className="search-box">
               <Search size={17} />

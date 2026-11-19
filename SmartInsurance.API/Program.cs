@@ -18,11 +18,15 @@ builder.Services.AddScoped<SmartInsurance.API.Services.NotificationService>();
 builder.Services.AddScoped<SmartInsurance.API.Interfaces.IEmailService, SmartInsurance.API.Services.SmtpEmailService>();
 builder.Services.AddOpenApi();
 
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? new[] { "http://localhost:5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
