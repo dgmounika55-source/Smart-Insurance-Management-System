@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartInsurance.API.Models;
 
@@ -17,8 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Claim> Claims => Set<Claim>();
     public DbSet<ClaimDocument> ClaimDocuments => Set<ClaimDocument>();
     public DbSet<ClaimStatusHistory> ClaimStatusHistories => Set<ClaimStatusHistory>();
-
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<Payment> Payments => Set<Payment>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -105,6 +105,32 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Notification>()
             .HasIndex(n => new { n.CustomerId, n.IsRead, n.CreatedAt });
+
+        builder.Entity<Payment>()
+            .HasIndex(p => p.TransactionReference)
+            .IsUnique();
+
+        builder.Entity<Payment>()
+            .Property(p => p.Amount)
+            .HasPrecision(18, 2);
+
+        builder.Entity<Payment>()
+            .HasOne(p => p.Customer)
+            .WithMany()
+            .HasForeignKey(p => p.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Payment>()
+            .HasOne(p => p.Policy)
+            .WithMany()
+            .HasForeignKey(p => p.PolicyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Payment>()
+            .HasOne(p => p.CustomerPolicy)
+            .WithMany()
+            .HasForeignKey(p => p.CustomerPolicyId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Entity<Customer>()
             .Property(c => c.FullName)

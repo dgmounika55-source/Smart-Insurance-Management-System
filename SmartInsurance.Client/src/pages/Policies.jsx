@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ShieldCheck, Search, ShoppingCart } from "lucide-react";
+import { ShieldCheck, Search, ShoppingCart, CreditCard, X } from "lucide-react";
 import api from "../services/api";
 
 export default function Policies() {
@@ -9,6 +9,8 @@ export default function Policies() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [purchasingId, setPurchasingId] = useState(null);
+  const [paymentSession, setPaymentSession] = useState(null);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
 
   const userRole = localStorage.getItem("userRole");
   const isCustomer = userRole === "Customer";
@@ -32,32 +34,64 @@ export default function Policies() {
     fetchPolicies();
   }, []);
 
+  function formatCurrency(amount) {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount ?? 0);
+  }
+
   async function handlePurchase(policy) {
-    const confirmed = window.confirm(
-      `Do you want to purchase ${policy.policyName}?\n\nPremium: ${formatCurrency(policy.premiumAmount)}\nCoverage: ${formatCurrency(policy.coverageAmount)}`
-    );
-
-    if (!confirmed) return;
-
     try {
       setPurchasingId(policy.policyId);
       setMessage("");
       setError("");
 
-      const response = await api.post("/customerpolicies/purchase", {
-        policyId: policy.policyId
+      const response = await api.post("/payments/create", {
+        policyId: policy.policyId,
       });
 
-      setMessage(
-        `${response.data.message} Your policy reference is ${response.data.policyReference}.`
-      );
+      setPaymentSession(response.data);
     } catch (err) {
       setError(
         err.response?.data?.message ||
-        "Policy purchase failed. Please try again."
+        "Unable to create payment session. Please try again."
       );
     } finally {
       setPurchasingId(null);
+    }
+  }
+
+  async function completePayment(success) {
+    if (!paymentSession) return;
+
+    try {
+      setPaymentProcessing(true);
+      setError("");
+      setMessage("");
+
+      const response = await api.post("/payments/complete", {
+        paymentId: paymentSession.paymentId,
+        success,
+      });
+
+      setMessage(
+        response.data.message +
+        (response.data.policyReference
+          ? ` Policy reference: ${response.data.policyReference}.`
+          : "")
+      );
+
+      setPaymentSession(null);
+      await fetchPolicies();
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        "Unable to process payment. Please try again."
+      );
+    } finally {
+      setPaymentProcessing(false);
     }
   }
 
@@ -66,14 +100,6 @@ export default function Policies() {
       .toLowerCase()
       .includes(search.toLowerCase())
   );
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }).format(amount ?? 0);
-  }
 
   return (
     <div className="page-section">
@@ -170,6 +196,93 @@ export default function Policies() {
           </div>
         )}
       </div>
+
+      {paymentSession && (
+        <div className="checkout-overlay">
+          <div className="checkout-modal">
+            <div className="checkout-header">
+              <div className="checkout-brand">
+                <div className="checkout-brand-icon">
+                  <ShieldCheck size={22} />
+                </div>
+                <div>
+                  <strong>InsureFlow</strong>
+                  <span>Secure Checkout</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="checkout-close"
+                disabled={paymentProcessing}
+                onClick={() => setPaymentSession(null)}
+                aria-label="Close checkout"
+              >
+                <X size={19} />
+              </button>
+            </div>
+
+            <div className="checkout-title">
+              <span className="checkout-eyebrow">POLICY PAYMENT</span>
+              <h2>Complete your purchase</h2>
+              <p>Review your policy details before continuing.</p>
+            </div>
+
+            <div className="checkout-policy-card">
+              <div className="checkout-policy-icon">
+                <ShieldCheck size={25} />
+              </div>
+              <div className="checkout-policy-info">
+                <span>Selected insurance plan</span>
+                <strong>{paymentSession.policyName}</strong>
+                <small>Insurance policy premium</small>
+              </div>
+            </div>
+
+            <div className="checkout-amount-card">
+              <span>Total amount payable</span>
+              <h1>{formatCurrency(paymentSession.amount)}</h1>
+              <div className="checkout-transaction">
+                <span>Transaction reference</span>
+                <strong>{paymentSession.transactionReference}</strong>
+              </div>
+            </div>
+
+            <div className="checkout-demo-note">
+              <div className="checkout-demo-icon">
+                <CreditCard size={18} />
+              </div>
+              <div>
+                <strong>Development payment simulator</strong>
+                <p>This is a demo transaction. No real money will be charged.</p>
+              </div>
+            </div>
+
+            <div className="checkout-actions">
+              <button
+                type="button"
+                className="checkout-pay-button"
+                disabled={paymentProcessing}
+                onClick={() => completePayment(true)}
+              >
+                {paymentProcessing ? "Processing payment..." : `Pay ${formatCurrency(paymentSession.amount)}`}
+              </button>
+              <button
+                type="button"
+                className="checkout-fail-button"
+                disabled={paymentProcessing}
+                onClick={() => completePayment(false)}
+              >
+                Simulate Payment Failure
+              </button>
+            </div>
+
+            <div className="checkout-footer">
+              <span><ShieldCheck size={14} /> Demo checkout environment</span>
+              <span>Test transaction only</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

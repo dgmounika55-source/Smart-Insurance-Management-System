@@ -100,6 +100,28 @@ if (app.Environment.IsDevelopment())
 
     await dbContext.Database.EnsureCreatedAsync();
 
+    await dbContext.Database.ExecuteSqlRawAsync("""
+        CREATE TABLE IF NOT EXISTS "Payments" (
+            "PaymentId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            "CustomerId" INTEGER NOT NULL,
+            "PolicyId" INTEGER NOT NULL,
+            "CustomerPolicyId" INTEGER NULL,
+            "TransactionReference" TEXT NOT NULL,
+            "Amount" TEXT NOT NULL,
+            "PaymentMethod" TEXT NOT NULL,
+            "Status" TEXT NOT NULL,
+            "CreatedAt" TEXT NOT NULL,
+            "PaidAt" TEXT NULL,
+            FOREIGN KEY ("CustomerId") REFERENCES "Customers" ("CustomerId") ON DELETE RESTRICT,
+            FOREIGN KEY ("PolicyId") REFERENCES "Policies" ("PolicyId") ON DELETE RESTRICT,
+            FOREIGN KEY ("CustomerPolicyId") REFERENCES "CustomerPolicies" ("CustomerPolicyId") ON DELETE SET NULL
+        );
+
+        CREATE UNIQUE INDEX IF NOT EXISTS "IX_Payments_TransactionReference"
+        ON "Payments" ("TransactionReference");
+        """);
+
+
     await RoleSeeder.SeedRolesAsync(scope.ServiceProvider);
     await ClaimsManagerSeeder.SeedAsync(scope.ServiceProvider);
     await AdminSeeder.SeedAsync(scope.ServiceProvider);

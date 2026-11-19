@@ -77,57 +77,13 @@ public class CustomerPoliciesController : ControllerBase
 
     [HttpPost("purchase")]
     [Authorize(Roles = "Customer")]
-    public async Task<IActionResult> PurchasePolicy(PurchasePolicyRequest request)
+    public IActionResult PurchasePolicy()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                     ?? User.FindFirstValue("sub");
-
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Id == userId);
-
-        if (user == null)
-            return Unauthorized();
-
-        var customer = await _context.Customers
-            .FirstOrDefaultAsync(c => c.Email == user.Email);
-
-        if (customer == null)
-            return BadRequest(new { message = "Customer profile not found." });
-
-        var policy = await _context.Policies
-            .FirstOrDefaultAsync(p =>
-                p.PolicyId == request.PolicyId &&
-                p.Status == "Active");
-
-        if (policy == null)
-            return BadRequest(new { message = "Selected policy is unavailable." });
-
-        var startDate = DateTime.UtcNow.Date;
-
-        var customerPolicy = new CustomerPolicy
+        return Conflict(new
         {
-            CustomerId = customer.CustomerId,
-            PolicyId = policy.PolicyId,
-            PolicyReference = $"CP-{Guid.NewGuid():N}"[..12].ToUpperInvariant(),
-            PurchaseDate = DateTime.UtcNow,
-            StartDate = startDate,
-            EndDate = startDate.AddMonths(policy.DurationMonths),
-            Status = "Active"
-        };
-
-        _context.CustomerPolicies.Add(customerPolicy);
-        await _context.SaveChangesAsync();
-
-        return Ok(new
-        {
-            message = "Policy purchased successfully.",
-            customerPolicy.CustomerPolicyId,
-            customerPolicy.PolicyReference,
-            customerPolicy.StartDate,
-            customerPolicy.EndDate
+            message = "Direct policy purchases are disabled. Please complete payment through the payment checkout."
         });
     }
-
     private bool IsAuthorizedCustomer(int customerId)
     {
         if (User.IsInRole("Admin") || User.IsInRole("ClaimsManager"))
