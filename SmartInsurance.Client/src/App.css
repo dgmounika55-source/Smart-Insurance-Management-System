@@ -1213,3 +1213,1290 @@ tbody tr:last-child td { border-bottom: 0; }
     padding: 22px;
   }
 }
+
+/* ==========================================
+   INSUREFLOW — PREMIUM DARK NAVY THEME
+   ========================================== */
+
+:root {
+  color-scheme: dark;
+  --bg-main: #080d1a;
+  --bg-sidebar: #0b1224;
+  --bg-card: #111b30;
+  --bg-card-hover: #16233c;
+  --bg-input: #0c1629;
+  --border-dark: #24334d;
+  --text-primary: #f1f5ff;
+  --text-secondary: #a2b0c7;
+  --text-muted: #7788a5;
+  --blue-primary: #3978ff;
+  --blue-bright: #55b8ff;
+  --green: #35c995;
+  --red: #ff737d;
+  --orange: #ffb65c;
+}
+
+html, body, #root {
+  min-height: 100%;
+  background: var(--bg-main);
+}
+
+body {
+  color: var(--text-primary);
+  background:
+    radial-gradient(ellipse at 80% 0%, rgba(38, 91, 190, .10), transparent 40%),
+    var(--bg-main);
+}
+
+.app-layout { background: transparent; }
+
+.sidebar {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-dark);
+}
+
+.brand h2,
+.profile-info strong,
+.page-title-row h1,
+.welcome-row h1,
+.panel-heading h3,
+.stat-card h2,
+.activity-total strong,
+.payout-panel > h2,
+.report-card > strong {
+  color: var(--text-primary);
+}
+
+.brand-icon,
+.avatar,
+.top-avatar {
+  background: #172c50;
+  color: var(--blue-bright);
+}
+
+.brand span,
+.workspace-label,
+.settings-label,
+.eyebrow,
+.profile-info span,
+.breadcrumb,
+.subtitle,
+.page-title-row p,
+.panel-heading p,
+.stat-card > p,
+.stat-note,
+.legend span,
+.footer,
+.report-card p,
+.report-card > span {
+  color: var(--text-secondary);
+}
+
+.nav-link { color: #9aaac4; }
+
+.nav-link:hover,
+.nav-link.active {
+  color: #70aaff;
+  background: linear-gradient(90deg, #172f55, #132542);
+}
+
+.help-card {
+  background: #111f37;
+  border: 1px solid var(--border-dark);
+}
+
+.help-card strong { color: var(--text-primary); }
+.help-card p { color: var(--text-secondary); }
+
+.profile { border-top-color: var(--border-dark); }
+.profile-settings { color: var(--text-muted); }
+
+.main-content { background: transparent; }
+
+.topbar {
+  background: rgba(11, 18, 36, .94);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.breadcrumb strong { color: var(--text-primary); }
+
+.search-box {
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  color: var(--text-muted);
+}
+
+.search-box input {
+  color: var(--text-primary);
+}
+
+.search-box input::placeholder { color: var(--text-muted); }
+
+.notification-button { color: var(--text-secondary); }
+
+.page-content { color: var(--text-primary); }
+
+.stat-card,
+.panel,
+.report-card {
+  background: linear-gradient(145deg, #142039, #101a2e);
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .16);
+}
+
+.stat-card:hover,
+.report-card:hover {
+  border-color: #34588b;
+  transform: translateY(-2px);
+  transition: .2s ease;
+}
+
+.stat-icon.blue,
+.payout-icon {
+  background: #18345c;
+  color: #65a7ff;
+}
+
+.stat-icon.purple { background: #30234e; color: #b99aff; }
+.stat-icon.orange { background: #49321f; color: #ffbd73; }
+.stat-icon.green { background: #153c35; color: #52d5a7; }
+
+.primary-button,
+.auth-submit {
+  background: linear-gradient(135deg, #4388ff, #2856d8);
+  color: white;
+  box-shadow: 0 6px 20px rgba(57, 120, 255, .24);
+}
+
+.primary-button:hover,
+.auth-submit:hover {
+  background: linear-gradient(135deg, #62a0ff, #3970ef);
+}
+
+.period-button {
+  background: var(--bg-input);
+  border-color: var(--border-dark);
+  color: var(--text-secondary);
+}
+
+.progress-track,
+.payout-track { background: #25334a; }
+
+.progress-approved { background: #35c995; }
+.progress-pending { background: #ffb65c; }
+.progress-rejected { background: #ff737d; }
+
+.legend strong,
+.payout-footer strong { color: var(--text-primary); }
+
+.payout-track div {
+  background: linear-gradient(90deg, #3978ff, #55b8ff);
+}
+
+.view-all,
+.help-card button { color: var(--blue-bright); }
+
+.view-all:hover { color: #8ac8ff; }
+
+table { color: var(--text-secondary); }
+
+thead { background: #0d1729; }
+
+th {
+  color: #8ea2c0;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+td {
+  color: #aebbd0;
+  border-bottom-color: #223149;
+}
+
+tbody tr:hover { background: rgba(57, 120, 255, .06); }
+
+.claim-id { color: #75aaff; }
+.customer-name,
+.amount { color: var(--text-primary); }
+
+.status.pending { background: #49351e; color: #ffc477; }
+.status.approved { background: #153e35; color: #5cdbad; }
+.status.under-review { background: #19345d; color: #80b3ff; }
+.status.rejected { background: #48252e; color: #ff929b; }
+.status.cancelled { background: #30384a; color: #b3bfd1; }
+.status.documents-required { background: #45351f; color: #ffd18a; }
+
+.more-button { color: var(--text-secondary); }
+
+.page-toolbar {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.page-toolbar > span { color: var(--text-secondary); }
+
+.report-card h3 { color: var(--text-primary); }
+
+/* Authentication pages */
+
+.auth-page {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(57, 120, 255, .17), transparent 55%),
+    var(--bg-main);
+  color: var(--text-primary);
+}
+
+.auth-brand h2,
+.auth-card h1 { color: var(--text-primary); }
+
+.auth-brand span,
+.auth-subtitle,
+.auth-switch,
+.auth-footer { color: var(--text-secondary); }
+
+.auth-card {
+  background: linear-gradient(145deg, #142039, #0e172a);
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, .35);
+}
+
+.auth-icon {
+  background: #19345d;
+  color: var(--blue-bright);
+}
+
+.auth-card label { color: #c5d1e3; }
+
+.auth-input {
+  background: var(--bg-input);
+  border-color: var(--border-dark);
+}
+
+.auth-input input { color: var(--text-primary); }
+
+.auth-input:focus-within {
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(57, 120, 255, .16);
+}
+
+.auth-switch a { color: var(--blue-bright); }
+
+/* Shared form controls */
+
+input, textarea, select {
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border-color: var(--border-dark);
+}
+
+input::placeholder,
+textarea::placeholder { color: #71839f; }
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--blue-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(57, 120, 255, .13);
+}
+
+label { color: #c5d1e3; }
+
+button:disabled { opacity: .5; }
+
+/* Policy management and checkout */
+
+.page-section .panel {
+  background: linear-gradient(145deg, #142039, #101a2e);
+  border-color: var(--border-dark);
+}
+
+.page-section .page-title-row h1 { color: var(--text-primary); }
+.page-section .page-title-row p { color: var(--text-secondary); }
+
+.page-section .checkout-modal {
+  background: #111d32;
+  color: var(--text-primary);
+  border: 1px solid #304361;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, .55);
+}
+
+.page-section .checkout-modal h2,
+.page-section .checkout-modal h3,
+.page-section .checkout-modal strong {
+  color: var(--text-primary);
+}
+
+.page-section .checkout-modal p,
+.page-section .checkout-modal span {
+  color: var(--text-secondary);
+}
+
+.page-section .checkout-modal form label { color: #c5d1e3; }
+
+.page-section .checkout-modal form input,
+.page-section .checkout-modal form select {
+  background: #0b1527;
+  border-color: #30415d;
+  color: var(--text-primary);
+}
+
+.page-section .checkout-modal form input:focus,
+.page-section .checkout-modal form select:focus {
+  background: #0b1527;
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(57, 120, 255, .15);
+}
+
+.page-section .secondary-button {
+  background: #1b3458;
+  color: #8fc0ff;
+  border: 1px solid #31527f;
+}
+
+.page-section .secondary-button:hover {
+  background: #244675;
+}
+
+.page-section .checkout-fail-button {
+  background: #48252e;
+  color: #ff9ba3;
+  border: 1px solid #733541;
+}
+
+.page-section .checkout-fail-button:hover {
+  background: #5b2b37;
+}
+
+/* Scrollbar */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #344967 #0b1425;
+}
+
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: #0b1425; }
+*::-webkit-scrollbar-thumb {
+  background: #344967;
+  border-radius: 20px;
+}
+
+/* Responsive refinements */
+
+@media (max-width: 760px) {
+  .sidebar { background: var(--bg-sidebar); }
+  .topbar { background: var(--bg-sidebar); }
+  .stat-card, .panel { border-radius: 12px; }
+}
+
+
+/* DARK THEME — HOVER STATE FIXES */
+
+.nav-link:hover,
+.nav-link.active:hover,
+.search-box:hover,
+.period-button:hover,
+.table-wrap tbody tr:hover,
+.stat-card:hover,
+.panel:hover,
+.report-card:hover {
+  background-color: #172640;
+  color: #75b5ff;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.secondary-button:hover {
+  background: #244675 !important;
+  color: #a9d2ff !important;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  background-color: #101e34;
+  border-color: #3978ff;
+}
+
+.table-wrap tbody tr:hover td {
+  background-color: #172640;
+  color: #e2eaff;
+}
+
+
+/* INSUREFLOW POLICIES PAGE DARK FIX */
+.page-section .panel {
+  background: #111b30 !important;
+  border: 1px solid #24334d !important;
+  color: #f1f5ff !important;
+}
+
+.page-section .table-wrap {
+  background: #111b30 !important;
+}
+
+.page-section table,
+.page-section thead,
+.page-section tbody,
+.page-section tr,
+.page-section th,
+.page-section td {
+  background-color: transparent !important;
+  color: #e2eaff !important;
+  border-color: #24334d !important;
+}
+
+.page-section tbody tr:hover,
+.page-section tbody tr:hover td {
+  background: #1a2a45 !important;
+}
+
+.page-section .claim-id,
+.page-section .customer-name,
+.page-section .amount {
+  color: #f1f5ff !important;
+}
+
+.page-section .search-box input {
+  background: #0c1629 !important;
+  color: #f1f5ff !important;
+}
+
+.checkout-modal {
+  background: #111b30 !important;
+  color: #f1f5ff !important;
+  border: 1px solid #2b4264 !important;
+}
+
+.checkout-modal h1,
+.checkout-modal h2,
+.checkout-modal h3,
+.checkout-modal p,
+.checkout-modal label,
+.checkout-modal span {
+  color: #e2eaff;
+}
+
+.checkout-policy-card,
+.checkout-amount-card,
+.checkout-demo-note {
+  background: #172640 !important;
+  border: 1px solid #2b4264 !important;
+  color: #f1f5ff !important;
+}
+
+.checkout-modal input,
+.checkout-modal select,
+.checkout-modal textarea {
+  background: #0c1629 !important;
+  color: #f1f5ff !important;
+  border: 1px solid #344966 !important;
+}
+
+.checkout-close {
+  color: #f1f5ff !important;
+  background: #24334d !important;
+}
+
+
+/* FINAL POLICIES TOOLBAR DARK FIX */
+.page-section .page-toolbar {
+  background: #111b30 !important;
+  color: #f1f5ff !important;
+  border: 1px solid #24334d !important;
+}
+
+.page-section .search-box {
+  background: #0c1629 !important;
+  border: 1px solid #344966 !important;
+  color: #f1f5ff !important;
+}
+
+.page-section .search-box input {
+  background: transparent !important;
+  color: #f1f5ff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.page-section .search-box input::placeholder {
+  color: #8294b2 !important;
+}
+
+.page-section .page-toolbar > span,
+.page-section .page-toolbar p {
+  color: #a2b0c7 !important;
+}
+
+
+/* PREMIUM LOGOUT BUTTON */
+.logout-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 17px !important;
+  border: 1px solid #713b4b !important;
+  border-radius: 10px !important;
+  background: #251725 !important;
+  color: #ff8794 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background: #49202d !important;
+  border-color: #ff737d !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.profile .avatar {
+  display: none !important;
+}
+.profile {
+  gap: 12px;
+}
+.top-actions .top-avatar {
+  display: none !important;
+}
+
+.profile .avatar {
+  display: flex !important;
+}
+
+/* SIDEBAR PROFILE ALIGNMENT */
+.sidebar-bottom .profile {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100%;
+  padding: 12px !important;
+  box-sizing: border-box;
+}
+
+.sidebar-bottom .profile .avatar {
+  display: flex !important;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-bottom .profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-bottom .profile-info strong,
+.sidebar-bottom .profile-info span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-bottom .logout-button {
+  flex-shrink: 0;
+}
+
+
+/* CLICKABLE PROFILE AVATAR */
+.profile-avatar-button {
+  cursor: pointer !important;
+  font: inherit;
+  transition: all 0.2s ease;
+}
+
+.profile-avatar-button:hover {
+  background: #2455a0 !important;
+  border-color: #55b8ff !important;
+  transform: scale(1.06);
+  box-shadow: 0 0 14px rgba(85, 184, 255, 0.25);
+}
+
+
+/* INSUREFLOW CLAIMS — DARK NAVY THEME */
+.page-section .claim-form-panel,
+.page-section .claim-form,
+.page-section .claim-history,
+.page-section .claim-document-section,
+.page-section .uploaded-document-list,
+.page-section .uploaded-document-item,
+.page-section .history-cell {
+  background: #111b30 !important;
+  color: #f1f5ff !important;
+  border-color: #24334d !important;
+}
+
+.page-section .claim-form-panel h2,
+.page-section .claim-form-panel h3,
+.page-section .claim-history h3,
+.page-section .claim-document-section h3,
+.page-section .claim-form label {
+  color: #f1f5ff !important;
+}
+
+.page-section .claim-form input,
+.page-section .claim-form select,
+.page-section .claim-form textarea {
+  background: #0c1629 !important;
+  color: #f1f5ff !important;
+  border: 1px solid #344966 !important;
+}
+
+.page-section .claim-form input::placeholder,
+.page-section .claim-form textarea::placeholder {
+  color: #8294b2 !important;
+}
+
+.page-section .claim-actions button,
+.page-section .history-button,
+.page-section .review-action-button,
+.page-section .cancel-claim-button {
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.page-section .history-button,
+.page-section .review-action-button {
+  background: #1b3458 !important;
+  color: #8fc5ff !important;
+  border: 1px solid #345782 !important;
+}
+
+.page-section .approve-action {
+  background: #123d35 !important;
+  color: #55d9ad !important;
+  border-color: #24745e !important;
+}
+
+.page-section .reject-action,
+.page-section .cancel-claim-button {
+  background: #46232d !important;
+  color: #ff929c !important;
+  border-color: #793b49 !important;
+}
+
+.page-section .claim-history p,
+.page-section .claim-history span,
+.page-section .uploaded-document-item,
+.page-section .claim-document-section p {
+  color: #b8c7df !important;
+}
+
+.page-section .claim-history {
+  border: 1px solid #24334d !important;
+  border-radius: 12px;
+  padding: 18px !important;
+}
+
+.page-section .uploaded-document-item {
+  background: #172640 !important;
+  border: 1px solid #2b4264 !important;
+  border-radius: 9px;
+  padding: 12px !important;
+}
+
+.page-section .history-cell {
+  border-color: #24334d !important;
+}
+
+/* PREFERENCES PAGE */
+.preferences-panel {
+  margin-bottom: 20px;
+  padding: 24px !important;
+}
+.preferences-panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f1f5ff;
+  margin-bottom: 20px;
+}
+.preferences-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #f1f5ff;
+}
+.preferences-profile p,
+.preference-row p,
+.preferences-panel > p {
+  color: #a2b0c7;
+  margin: 5px 0;
+}
+.preferences-profile span {
+  color: #55b8ff;
+  font-size: 13px;
+}
+.preference-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 17px 0;
+  border-bottom: 1px solid #24334d;
+  color: #f1f5ff;
+}
+.preference-switch input {
+  accent-color: #3978ff;
+  width: 19px;
+  height: 19px;
+  cursor: pointer;
+}
+.preferences-save {
+  margin-top: 20px;
+}
+
+/* COMPACT SETTINGS PAGE */
+.preferences-panel {
+  padding: 18px !important;
+}
+
+.preferences-panel h3 {
+  font-size: 16px !important;
+  margin-bottom: 14px;
+}
+
+.preferences-profile strong,
+.preference-row strong {
+  font-size: 14px !important;
+}
+
+.preferences-profile p,
+.preference-row p,
+.preferences-panel > p {
+  font-size: 12px !important;
+  line-height: 1.5;
+}
+
+.preferences-profile .avatar {
+  width: 42px;
+  height: 42px;
+  font-size: 14px;
+}
+
+.preference-row {
+  padding: 12px 0;
+}
+
+
+/* NOTIFICATION PREFERENCE ALIGNMENT */
+.preferences-panel .preference-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px;
+  min-height: 66px;
+  padding: 14px 4px !important;
+}
+
+.preferences-panel .preference-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.preferences-panel .preference-row strong {
+  display: block;
+  font-size: 14px !important;
+  margin-bottom: 4px;
+}
+
+.preferences-panel .preference-row p {
+  font-size: 12px !important;
+  margin: 0;
+}
+
+.preferences-panel .preference-switch {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0;
+  margin: 0 8px;
+}
+
+.preferences-panel .preference-switch input {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+
+.preferences-panel .preference-row {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  text-align: left !important;
+  width: 100%;
+}
+
+.preferences-panel .preference-row > div {
+  flex: 1 1 auto !important;
+  text-align: left !important;
+  margin-right: auto !important;
+}
+
+.preferences-panel .preference-switch {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+
+/* SETTINGS PAGE - ALIGNMENT */
+.preferences-panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px !important;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.preferences-panel h3 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 0 0 22px;
+  text-align: left;
+}
+
+.preferences-profile {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.preferences-profile > div:last-child {
+  min-width: 0;
+  text-align: left;
+}
+
+.preferences-panel .claim-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  max-width: 680px;
+  margin: 0;
+  text-align: left;
+}
+
+.preferences-panel .claim-form h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 6px;
+  text-align: left;
+}
+
+.preferences-panel .form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+}
+
+.preferences-panel .form-group label {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.preferences-panel .form-group input,
+.preferences-panel .form-group textarea {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.preferences-panel .form-group textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.preferences-panel .claim-form > button {
+  align-self: flex-start;
+  min-width: 155px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.preferences-panel .success-message {
+  width: 100%;
+  margin: 8px 0 0;
+  text-align: left;
+}
+
+.preferences-panel .preference-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px;
+  width: 100%;
+  min-height: 68px;
+  padding: 14px 0;
+  box-sizing: border-box;
+  text-align: left !important;
+  border-bottom: 1px solid #24334d;
+}
+
+.preferences-panel .preference-row > div {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.preferences-panel .preference-row strong,
+.preferences-panel .preference-row p {
+  display: block;
+  text-align: left !important;
+  margin: 0;
+}
+
+.preferences-panel .preference-row p {
+  margin-top: 5px;
+}
+
+.preferences-panel .preference-switch {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0 4px 0 auto !important;
+}
+
+.preferences-panel .preferences-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+@media (max-width: 640px) {
+  .preferences-panel {
+    padding: 17px !important;
+  }
+
+  .preferences-panel .claim-form {
+    max-width: 100%;
+  }
+
+  .preferences-panel .preference-row {
+    gap: 12px;
+  }
+}
+
+/* GLOBAL COMPACT LAYOUT */
+.page-section {
+  padding: 18px 22px !important;
+}
+
+.page-title-row {
+  margin-bottom: 14px !important;
+}
+
+.page-title-row h1 {
+  margin-bottom: 4px !important;
+}
+
+.page-title-row p {
+  margin: 0 !important;
+}
+
+.page-section .panel,
+.page-section .stat-card,
+.page-section .dashboard-card {
+  padding: 16px !important;
+  margin-bottom: 14px !important;
+}
+
+.page-section .panel h3 {
+  margin-bottom: 12px !important;
+}
+
+.page-section .stats-grid,
+.page-section .dashboard-grid,
+.page-section .card-grid {
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.page-section .form-group {
+  margin-bottom: 10px !important;
+  gap: 6px !important;
+}
+
+.page-section input,
+.page-section select {
+  min-height: 38px !important;
+}
+
+.page-section textarea {
+  min-height: 70px !important;
+}
+
+.page-section .page-toolbar {
+  margin-bottom: 12px !important;
+  padding: 10px 12px !important;
+}
+
+.page-section table th,
+.page-section table td {
+  padding: 9px 12px !important;
+}
+
+.page-section .preference-row {
+  min-height: 54px !important;
+  padding: 9px 0 !important;
+}
+
+.page-section .claim-form {
+  gap: 11px !important;
+}
+
+@media (max-width: 768px) {
+  .page-section {
+    padding: 12px !important;
+  }
+
+  .page-section .panel {
+    padding: 13px !important;
+  }
+}
+
+.forgot-password-link {
+  display: flex;
+  justify-content: flex-end;
+  margin: 7px 0 15px;
+  font-size: 13px;
+}
+
+.forgot-password-link a {
+  color: #55b8ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgot-password-link a:hover {
+  color: #8acbff;
+  text-decoration: underline;
+}
+
+/* Compact Settings page */
+.preferences-panel {
+  padding: 18px 22px !important;
+  margin-bottom: 14px !important;
+}
+
+.preferences-panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 14px !important;
+}
+
+.preferences-panel .preferences-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.preferences-panel .settings-compact-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px !important;
+  margin-top: 10px;
+}
+
+.preferences-panel .settings-compact-form h4 {
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+}
+
+.preferences-panel .settings-compact-form .form-group {
+  margin: 0 !important;
+  min-width: 0;
+}
+
+.preferences-panel .settings-compact-form label {
+  display: block;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.preferences-panel .settings-compact-form input,
+.preferences-panel .settings-compact-form textarea {
+  width: 100%;
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.preferences-panel .settings-compact-form textarea {
+  min-height: 60px;
+}
+
+.preferences-panel .settings-compact-form button {
+  justify-self: start;
+  align-self: end;
+  min-height: 38px;
+}
+
+.preferences-panel .settings-compact-form .success-message {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+}
+
+.preferences-panel .preference-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px;
+  text-align: left !important;
+  padding: 10px 0;
+}
+
+.preferences-panel .preference-row > div {
+  flex: 1;
+  min-width: 0;
+  text-align: left !important;
+}
+
+.preferences-panel .preference-switch {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+@media (max-width: 650px) {
+  .preferences-panel .settings-compact-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Settings profile edit controls */
+.preferences-panel .settings-edit-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+
+.preferences-panel .settings-edit-heading h4 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+}
+
+.preferences-panel .settings-edit-button {
+  min-height: 34px;
+  padding: 7px 13px;
+}
+
+.preferences-panel .settings-edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  grid-column: 1 / -1;
+}
+
+.preferences-panel .settings-cancel-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid #34445f;
+  border-radius: 8px;
+  background: #17243a;
+  color: #e5edff;
+  cursor: pointer;
+}
+
+.preferences-panel .settings-cancel-button:hover {
+  background: #22334e;
+}
+
+.preferences-panel .settings-compact-form input:disabled,
+.preferences-panel .settings-compact-form textarea:disabled {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.preferences-panel .settings-message {
+  grid-column: 1 / -1;
+}
+
+/* Shorter, cleaner Settings layout */
+.page-section:has(.preferences-panel) {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.preferences-panel {
+  padding: 13px 18px !important;
+  margin-bottom: 9px !important;
+}
+
+.preferences-panel h3 {
+  margin-bottom: 9px !important;
+  font-size: 15px !important;
+}
+
+.preferences-panel .preferences-profile {
+  margin-bottom: 8px !important;
+}
+
+.preferences-panel .settings-edit-heading {
+  margin: 4px 0 8px !important;
+}
+
+.preferences-panel .settings-compact-form {
+  gap: 7px 12px !important;
+  margin-top: 5px !important;
+}
+
+.preferences-panel .settings-compact-form input {
+  min-height: 34px !important;
+}
+
+.preferences-panel .settings-compact-form textarea {
+  min-height: 44px !important;
+}
+
+.preferences-panel .preference-row {
+  padding: 6px 0 !important;
+}
+
+.preferences-panel .preferences-save {
+  margin-top: 7px !important;
+}
+
+.preferences-panel > p {
+  margin: 5px 0 !important;
+}
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { ShieldCheck, LockKeyhole, Mail, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
@@ -35,19 +35,19 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-brand">
-        <div className="brand-icon"><ShieldCheck size={27}/></div>
+        <div className="brand-icon"><ShieldCheck size={27} /></div>
         <div><h2>InsureFlow</h2><span>INSURANCE PLATFORM</span></div>
       </div>
 
       <div className="auth-card">
-        <div className="auth-icon"><LockKeyhole size={24}/></div>
+        <div className="auth-icon"><LockKeyhole size={24} /></div>
         <h1>Welcome back</h1>
         <p className="auth-subtitle">Sign in to access your insurance account.</p>
 
         <form onSubmit={handleSubmit}>
           <label>Email address</label>
           <div className="auth-input">
-            <Mail size={17}/>
+            <Mail size={17} />
             <input
               type="email"
               placeholder="you@example.com"
@@ -59,7 +59,7 @@ export default function Login() {
 
           <label>Password</label>
           <div className="auth-input">
-            <LockKeyhole size={17}/>
+            <LockKeyhole size={17} />
             <input
               type="password"
               placeholder="Enter your password"
@@ -69,11 +69,15 @@ export default function Login() {
             />
           </div>
 
+          <div className="forgot-password-link">
+            <Link to="/forgot-password">Forgot Password?</Link>
+          </div>
+
           {error && <p role="alert" className="auth-error">{error}</p>}
 
           <button className="auth-submit" type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
-            {!loading && <ArrowRight size={17}/>}
+            {!loading && <ArrowRight size={17} />}
           </button>
         </form>
 
@@ -82,7 +86,7 @@ export default function Login() {
         </p>
       </div>
 
-      <p className="auth-footer">Ã‚Â© 2026 InsureFlow. Secure insurance management.</p>
+      <p className="auth-footer">© 2026 InsureFlow. Secure insurance management.</p>
     </div>
   );
 }

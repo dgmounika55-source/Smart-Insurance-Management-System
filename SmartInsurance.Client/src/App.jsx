@@ -11,8 +11,10 @@ const Customers = lazy(() => import("./pages/Customers"));
 const Reports = lazy(() => import("./pages/Reports"));
 const CustomerDashboard = lazy(() => import("./pages/CustomerDashboard"));
 const PaymentHistory = lazy(() => import("./pages/PaymentHistory"));
+const Preferences = lazy(() => import("./pages/Preferences"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 import api from "./services/api";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
@@ -31,7 +33,7 @@ const formatDate = (date) =>
         month: "short",
         year: "numeric"
       })
-    : "—";
+    : "Ã¢â‚¬â€";
 
 const formatStatus = (status) => {
   if (status === "UnderReview") return "Under Review";
@@ -363,9 +365,9 @@ function AppLayout() {
           )}
         </nav>
 
-        <div className="workspace-label settings-label">PREFERENCES</div>
+        
         <nav className="nav-menu">
-          <a className="nav-link" href="#settings"><Settings size={19} />Settings</a>
+          <NavLink to="/preferences" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><Settings size={19} />Settings</NavLink>
         </nav>
 
         <div className="sidebar-bottom">
@@ -376,7 +378,7 @@ function AppLayout() {
             <button>Get Support <ChevronRight size={15} /></button>
           </div>
           <div className="profile">
-            <div className="avatar">AD</div>
+            <button type="button" className="avatar profile-avatar-button" title="Open Dashboard" onClick={() => navigate(userRole === "Customer" ? "/customer-dashboard" : "/")}>{userRole === "Admin" ? "AD" : userRole === "ClaimsManager" ? "CM" : (localStorage.getItem("userName") || "CU").split(" ").map(part => part[0]).join("").slice(0, 2).toUpperCase()}</button>
             <div className="profile-info">
               <strong>{localStorage.getItem("userName") || "Admin User"}</strong>
               <span>{localStorage.getItem("userRole") || "Administrator"}</span>
@@ -417,6 +419,7 @@ function AppLayout() {
             <Route element={<ProtectedRoute allowedRoles={["Customer", "Admin", "ClaimsManager"]} />}>
               <Route path="/policies" element={<Policies />} />
               <Route path="/claims" element={<Claims />} />
+              <Route path="/preferences" element={<Preferences />} />
             </Route>
             <Route path="/access-denied" element={<div className="page-message"><h2>Access denied</h2><p>You do not have permission to view this page.</p><NavLink to="/policies">Return to Policies</NavLink></div>} />
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -439,6 +442,7 @@ function AppContent() {
 
   if (location.pathname === "/login") return <Login />;
   if (location.pathname === "/register") return <Register />;
+  if (location.pathname === "/forgot-password") return <ForgotPassword />;
 
   if (!token) return <Navigate to="/login" replace />;
 

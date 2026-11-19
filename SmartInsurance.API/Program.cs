@@ -15,6 +15,7 @@ builder.Services.AddControllers()
             System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 builder.Services.AddScoped<SmartInsurance.API.Services.NotificationService>();
+builder.Services.AddScoped<SmartInsurance.API.Interfaces.IEmailService, SmartInsurance.API.Services.SmtpEmailService>();
 builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
