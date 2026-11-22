@@ -41,6 +41,8 @@ public class PoliciesController : ControllerBase
     public async Task<ActionResult<Policy>> CreatePolicy(Policy policy)
     {
         if (string.IsNullOrWhiteSpace(policy.PolicyName) ||
+            policy.PolicyName.Trim().Length > 100 ||
+            policy.PolicyType.Trim().Length > 50 ||
             string.IsNullOrWhiteSpace(policy.PolicyType) ||
             policy.PremiumAmount <= 0 ||
             policy.CoverageAmount <= 0 ||
@@ -49,6 +51,18 @@ public class PoliciesController : ControllerBase
             return BadRequest(new { message = "Enter valid policy details." });
         }
 
+        var normalizedName = policy.PolicyName.Trim().ToLower();
+        var normalizedType = policy.PolicyType.Trim().ToLower();
+
+        var duplicatePolicy = await _context.Policies.AnyAsync(p =>
+            p.PolicyName.ToLower() == normalizedName &&
+            p.PolicyType.ToLower() == normalizedType);
+
+        if (duplicatePolicy)
+            return Conflict(new { message = "A policy with this name and type already exists." });
+
+        policy.PolicyName = policy.PolicyName.Trim();
+        policy.PolicyType = policy.PolicyType.Trim();
         policy.PolicyNumber = $"POL-{Guid.NewGuid():N}"[..12].ToUpperInvariant();
         policy.Status = "Active";
 
@@ -68,6 +82,9 @@ public class PoliciesController : ControllerBase
             return NotFound(new { message = "Policy not found." });
 
         if (string.IsNullOrWhiteSpace(updatedPolicy.PolicyName) ||
+            string.IsNullOrWhiteSpace(updatedPolicy.PolicyType) ||
+            updatedPolicy.PolicyName.Trim().Length > 100 ||
+            updatedPolicy.PolicyType.Trim().Length > 50 ||
             updatedPolicy.PremiumAmount <= 0 ||
             updatedPolicy.CoverageAmount <= 0 ||
             updatedPolicy.DurationMonths <= 0)
@@ -75,6 +92,16 @@ public class PoliciesController : ControllerBase
             return BadRequest(new { message = "Enter valid policy details." });
         }
 
+        var normalizedName = updatedPolicy.PolicyName.Trim().ToLower();
+        var normalizedType = updatedPolicy.PolicyType.Trim().ToLower();
+
+        var duplicatePolicy = await _context.Policies.AnyAsync(p =>
+            p.PolicyId != id &&
+            p.PolicyName.ToLower() == normalizedName &&
+            p.PolicyType.ToLower() == normalizedType);
+
+        if (duplicatePolicy)
+            return Conflict(new { message = "A policy with this name and type already exists." });
         policy.PolicyName = updatedPolicy.PolicyName;
         policy.PolicyType = updatedPolicy.PolicyType;
         policy.PremiumAmount = updatedPolicy.PremiumAmount;

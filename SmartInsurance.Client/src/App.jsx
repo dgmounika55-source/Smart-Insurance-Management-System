@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import {
   LayoutDashboard, ShieldCheck, FileText, Users, Settings, ReceiptText,
-  Search, Bell, ChevronRight, Activity, Wallet,
-  ArrowUpRight, Clock, CheckCircle2, ClipboardList, Plus
+  Bell, ChevronRight, Activity, Wallet,
+  ArrowUpRight, Clock, CheckCircle2, ClipboardList, Plus,
+  Search,
 } from "lucide-react";
 import { BrowserRouter, Routes, Route, NavLink, useLocation, Navigate, useNavigate } from "react-router-dom";
 const Policies = lazy(() => import("./pages/Policies"));
@@ -12,9 +13,11 @@ const Reports = lazy(() => import("./pages/Reports"));
 const CustomerDashboard = lazy(() => import("./pages/CustomerDashboard"));
 const PaymentHistory = lazy(() => import("./pages/PaymentHistory"));
 const Preferences = lazy(() => import("./pages/Preferences"));
+const Support = lazy(() => import("./pages/Support"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 import api from "./services/api";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
@@ -33,7 +36,7 @@ const formatDate = (date) =>
         month: "short",
         year: "numeric"
       })
-    : "ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â";
+    : "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â";
 
 const formatStatus = (status) => {
   if (status === "UnderReview") return "Under Review";
@@ -43,23 +46,19 @@ const formatStatus = (status) => {
 function Dashboard() {
   const [summary, setSummary] = useState(null);
   const [statusSummary, setStatusSummary] = useState([]);
-  const [recentClaims, setRecentClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const [summaryResponse, statusResponse, claimsResponse] =
-          await Promise.all([
-            api.get("/dashboard/summary"),
-            api.get("/dashboard/claim-status"),
-            api.get("/dashboard/recent-claims")
-          ]);
+        const [summaryResponse, statusResponse] = await Promise.all([
+          api.get("/dashboard/summary"),
+          api.get("/dashboard/claim-status")
+        ]);
 
         setSummary(summaryResponse.data);
         setStatusSummary(statusResponse.data);
-        setRecentClaims(claimsResponse.data);
       } catch (err) {
         setError(
           err.response?.status === 403
@@ -88,6 +87,13 @@ function Dashboard() {
 
   const stats = summary
     ? [
+        {
+          title: "Total Customers",
+          value: summary.totalCustomers ?? 0,
+          note: "Registered customers",
+          icon: Users,
+          color: "teal"
+        },
         {
           title: "Active Policies",
           value: summary.totalPolicies,
@@ -121,24 +127,14 @@ function Dashboard() {
 
   return (
     <>
-      <section className="welcome-row">
+      <section className="welcome-row consistent-page-header">
         <div>
-          <p className="eyebrow">
-            {new Date().toLocaleDateString("en-IN", {
-              weekday: "long",
-              day: "2-digit",
-              month: "long",
-              year: "numeric"
-            }).toUpperCase()}
-          </p>
+          <div className="page-breadcrumb">OVERVIEW / DASHBOARD</div>
           <h1>Dashboard Overview</h1>
           <p className="subtitle">
             Welcome back! Here's what's happening with your insurance platform.
           </p>
         </div>
-        <NavLink to="/policies" className="primary-button">
-          <Plus size={18} /> View Policies
-        </NavLink>
       </section>
 
       {loading ? (
@@ -244,59 +240,6 @@ function Dashboard() {
               </div>
             </div>
           </section>
-
-          <section className="panel table-panel">
-            <div className="panel-heading table-heading">
-              <div>
-                <h3>Recent Claims</h3>
-                <p>Latest insurance claims submitted by customers</p>
-              </div>
-              <NavLink to="/claims" className="view-all">
-                View all claims <ArrowUpRight size={16} />
-              </NavLink>
-            </div>
-
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>CLAIM ID</th>
-                    <th>CUSTOMER</th>
-                    <th>SUBMITTED</th>
-                    <th>CLAIM AMOUNT</th>
-                    <th>STATUS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentClaims.length === 0 ? (
-                    <tr>
-                      <td colSpan="5">No claims available.</td>
-                    </tr>
-                  ) : (
-                    recentClaims.map((claim) => (
-                      <tr key={claim.claimId}>
-                        <td className="claim-id">{claim.claimNumber}</td>
-                        <td className="customer-name">{claim.customerName}</td>
-                        <td>{formatDate(claim.submissionDate)}</td>
-                        <td className="amount">
-                          {formatCurrency(claim.claimAmount)}
-                        </td>
-                        <td>
-                          <span
-                            className={`status ${formatStatus(claim.status)
-                              .toLowerCase()
-                              .replaceAll(" ", "-")}`}
-                          >
-                            {formatStatus(claim.status)}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
         </>
       )}
     </>
@@ -307,6 +250,10 @@ function AppLayout() {
   const navigate = useNavigate();
   const userRole = localStorage.getItem("userRole");
   const isStaff = ["Admin", "ClaimsManager"].includes(userRole);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const userName = localStorage.getItem("userName") || "User";
+  const userInitials = userName.split(" ").map(part => part[0]).join("").slice(0, 2).toUpperCase();
+  const roleLabel = userRole === "ClaimsManager" ? "Claims Manager" : userRole || "User";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -321,10 +268,10 @@ function AppLayout() {
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-icon"><ShieldCheck size={25} /></div>
-          <div><h2>InsureFlow</h2><span>INSURANCE PLATFORM</span></div>
+          <div><h2>InsureFlow</h2><span>ENTERPRISE INSURANCE SOLUTIONS</span></div>
         </div>
 
-        
+
         <nav className="nav-menu">
           {isStaff ? (
             <>
@@ -339,9 +286,6 @@ function AppLayout() {
               </NavLink>
               <NavLink to="/claims" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
                 <FileText size={19} />Claims
-              </NavLink>
-              <NavLink to="/payment-history" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
-                <ReceiptText size={19} />Payment History
               </NavLink>
               <NavLink to="/reports" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
                 <ClipboardList size={19} />Reports
@@ -365,7 +309,7 @@ function AppLayout() {
           )}
         </nav>
 
-        
+
         <nav className="nav-menu">
           <NavLink to="/preferences" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><Settings size={19} />Settings</NavLink>
         </nav>
@@ -375,16 +319,9 @@ function AppLayout() {
             <div className="help-icon"><Activity size={20} /></div>
             <strong>Need assistance?</strong>
             <p>Contact your platform administrator for support.</p>
-            <button>Get Support <ChevronRight size={15} /></button>
+            <button type="button" onClick={() => navigate("/support")}>Get Support <ChevronRight size={15} /></button>
           </div>
-          <div className="profile">
-            <button type="button" className="avatar profile-avatar-button" title="Open Dashboard" onClick={() => navigate(userRole === "Customer" ? "/customer-dashboard" : "/")}>{userRole === "Admin" ? "AD" : userRole === "ClaimsManager" ? "CM" : (localStorage.getItem("userName") || "CU").split(" ").map(part => part[0]).join("").slice(0, 2).toUpperCase()}</button>
-            <div className="profile-info">
-              <strong>{localStorage.getItem("userName") || "Admin User"}</strong>
-              <span>{localStorage.getItem("userRole") || "Administrator"}</span>
-            </div>
-            <button type="button" onClick={handleLogout} className="logout-button">Logout</button>
-          </div>
+
         </div>
       </aside>
 
@@ -392,12 +329,37 @@ function AppLayout() {
         <header className="topbar">
           <div className="breadcrumb"></div>
           <div className="top-actions">
-            <div className="search-box">
-              <Search size={17} />
-              <input placeholder="Search anything..." />
+            <div className="top-profile-wrapper">
+              <button
+                type="button"
+                className="top-profile-trigger"
+                onClick={() => setProfileOpen(!profileOpen)}
+                aria-expanded={profileOpen}
+                aria-label="Open user profile menu"
+              >
+                <span className="top-profile-avatar">{userInitials}</span>
+                <span className="top-profile-text">
+                  <strong>{userName}</strong>
+                  <small>{roleLabel}</small>
+                </span>
+                <ChevronRight size={16} className={profileOpen ? "profile-chevron open" : "profile-chevron"} />
+              </button>
+              {profileOpen && (
+                <div className="top-profile-dropdown">
+                  <div className="dropdown-user-info">
+                    <span className="top-profile-avatar">{userInitials}</span>
+                    <div>
+                      <strong>{userName}</strong>
+                      <small>{roleLabel}</small>
+                    </div>
+                  </div>
+                  <div className="dropdown-divider"></div>
+                  <button type="button" className="dropdown-logout" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
-            <button className="notification-button"><Bell size={19} /><i /></button>
-            <div className="top-avatar">AD</div>
           </div>
         </header>
 
@@ -417,6 +379,7 @@ function AppLayout() {
               <Route path="/policies" element={<Policies />} />
               <Route path="/claims" element={<Claims />} />
               <Route path="/preferences" element={<Preferences />} />
+              <Route path="/support" element={<Support />} />
             </Route>
             <Route path="/access-denied" element={<div className="page-message"><h2>Access denied</h2><p>You do not have permission to view this page.</p><NavLink to="/policies">Return to Policies</NavLink></div>} />
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -440,6 +403,7 @@ function AppContent() {
   if (location.pathname === "/login") return <Login />;
   if (location.pathname === "/register") return <Register />;
   if (location.pathname === "/forgot-password") return <ForgotPassword />;
+  if (location.pathname === "/reset-password") return <ResetPassword />;
 
   if (!token) return <Navigate to="/login" replace />;
 
@@ -457,7 +421,9 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <Suspense fallback={<p className="page-message">Loading InsureFlow...</p>}>
+        <AppContent />
+      </Suspense>
     </BrowserRouter>
   );
 }

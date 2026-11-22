@@ -42,8 +42,9 @@ export default function Customers() {
 
   return (
     <div className="page-section">
-      <div className="page-title-row">
+      <div className="page-title-row consistent-page-header">
         <div>
+          <div className="page-breadcrumb">MANAGEMENT / CUSTOMERS</div>
           <h1>Customers</h1>
           <p>View registered customers and their policy details.</p>
         </div>

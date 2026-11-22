@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SmartInsurance.API.Data;
@@ -30,6 +31,7 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
@@ -96,6 +98,7 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Registration successful. Please log in." });
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
@@ -114,6 +117,9 @@ public class AuthController : ControllerBase
         }
 
         var roles = await _userManager.GetRolesAsync(user);
+
+        if (roles.Count == 0)
+            return StatusCode(403, new { message = "No role is assigned to this account." });
 
         var key = _configuration["Jwt:Key"];
         var issuer = _configuration["Jwt:Issuer"];

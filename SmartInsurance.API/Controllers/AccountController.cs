@@ -71,8 +71,8 @@ public class AccountController : ControllerBase
 
         if (customer != null)
         {
-            customer.FullName = user.FullName;
-            customer.PhoneNumber = user.PhoneNumber;
+            customer.FullName = user.FullName ?? string.Empty;
+            customer.PhoneNumber = user.PhoneNumber ?? string.Empty;
             customer.Address = request.Address?.Trim();
             await _context.SaveChangesAsync();
         }

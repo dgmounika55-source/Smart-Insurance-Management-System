@@ -89,14 +89,16 @@ public class CustomerPoliciesController : ControllerBase
         if (User.IsInRole("Admin") || User.IsInRole("ClaimsManager"))
             return true;
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                     ?? User.FindFirstValue("sub");
-
         var email = User.FindFirstValue(ClaimTypes.Email)
                     ?? User.FindFirstValue("email");
 
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+
         return _context.Customers.Any(c =>
             c.CustomerId == customerId &&
-            c.Email == email);
+            c.Email.ToLower() == normalizedEmail);
     }
 }

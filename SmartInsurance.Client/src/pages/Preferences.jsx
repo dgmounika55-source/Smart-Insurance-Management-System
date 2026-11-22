@@ -176,8 +176,9 @@ export default function Preferences() {
 
   return (
     <div className="page-section">
-      <div className="page-title-row">
+      <div className="page-title-row settings-page-header">
         <div>
+          <div className="settings-breadcrumb">ACCOUNT / SETTINGS</div>
           <h1>Settings</h1>
           <p>Manage your account information and preferences.</p>
         </div>

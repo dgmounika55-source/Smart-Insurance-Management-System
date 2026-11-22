@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ReceiptText, CheckCircle2, XCircle, Clock, CreditCard, Eye, X
 } from "lucide-react";
@@ -20,13 +20,14 @@ const formatDate = (date) =>
         hour: "2-digit",
         minute: "2-digit"
       })
-    : "—";
+    : "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â";
 
 export default function PaymentHistory() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("all");
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -45,13 +46,24 @@ export default function PaymentHistory() {
   const paidPayments = payments.filter(
     (payment) => payment.status?.toLowerCase() === "paid"
   );
+
   const failedPayments = payments.filter(
     (payment) => payment.status?.toLowerCase() === "failed"
   );
+
+
+
   const totalPaid = paidPayments.reduce(
     (total, payment) => total + Number(payment.amount || 0),
     0
   );
+
+  const filteredPayments = payments.filter((payment) => {
+    const status = payment.status?.toLowerCase();
+    if (activeFilter === "paid") return status === "paid";
+    if (activeFilter === "failed") return status === "failed";
+    return true;
+  });
 
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
@@ -63,8 +75,9 @@ export default function PaymentHistory() {
 
   return (
     <>
-      <section className="welcome-row">
+      <section className="welcome-row consistent-page-header">
         <div>
+          <div className="page-breadcrumb">ACCOUNT / PAYMENT HISTORY</div>
           <p className="eyebrow">ACCOUNT ACTIVITY</p>
           <h1>Payment History</h1>
           <p className="subtitle">
@@ -115,7 +128,7 @@ export default function PaymentHistory() {
                 <h3>All Transactions</h3>
                 <p>Your insurance payment records</p>
               </div>
-              <span className="stat-note">{payments.length} transactions</span>
+              <span className="stat-note">{filteredPayments.length} transactions</span>
             </div>
 
             <div className="table-wrap">
@@ -132,23 +145,35 @@ export default function PaymentHistory() {
                   </tr>
                 </thead>
                 <tbody>
-                  {payments.length === 0 ? (
+                  {filteredPayments.length === 0 ? (
                     <tr>
-                      <td colSpan="7">No payment transactions found.</td>
+                      <td colSpan="7">
+                        No {activeFilter === "all" ? "" : activeFilter + " "}payment transactions found.
+                      </td>
                     </tr>
                   ) : (
-                    payments.map((payment) => (
+                    filteredPayments.map((payment) => (
                       <tr key={payment.paymentId}>
                         <td className="claim-id">{payment.transactionReference}</td>
                         <td className="customer-name">{payment.policyName}</td>
                         <td className="amount">{formatCurrency(payment.amount)}</td>
                         <td>{formatDate(payment.createdAt)}</td>
-                        <td>{payment.policyReference || "—"}</td>
+                        <td>{payment.status?.toLowerCase() === "failed" ? "N/A" : (payment.policyReference || "N/A")}</td>
                         <td>
-                          <span className={`status ${payment.status?.toLowerCase() || "pending"}`}>
+                          <button
+                            type="button"
+                            className={`status status-filter-button ${payment.status?.toLowerCase() || "pending"} ${activeFilter === payment.status?.toLowerCase() ? "status-filter-active" : ""}`}
+                            onClick={() => {
+                              const status = payment.status?.toLowerCase();
+                              if (status === "paid" || status === "failed") {
+                                setActiveFilter(activeFilter === status ? "all" : status);
+                              }
+                            }}
+                            disabled={!["paid", "failed"].includes(payment.status?.toLowerCase())}
+                          >
                             {getStatusIcon(payment.status)}
                             {payment.status || "Pending"}
-                          </span>
+                          </button>
                         </td>
                         <td>
                           <button
@@ -208,23 +233,23 @@ export default function PaymentHistory() {
             <div className="payment-details-grid">
               <div>
                 <span>Transaction Reference</span>
-                <strong>{selectedPayment.transactionReference || "—"}</strong>
+                <strong>{selectedPayment.transactionReference || "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"}</strong>
               </div>
               <div>
                 <span>Payment ID</span>
-                <strong>{selectedPayment.paymentId ?? "—"}</strong>
+                <strong>{selectedPayment.paymentId ?? "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"}</strong>
               </div>
               <div>
                 <span>Policy Name</span>
-                <strong>{selectedPayment.policyName || "—"}</strong>
+                <strong>{selectedPayment.policyName || "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"}</strong>
               </div>
               <div>
                 <span>Policy Reference</span>
-                <strong>{selectedPayment.policyReference || "—"}</strong>
+                <strong>{selectedPayment.policyReference || "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"}</strong>
               </div>
               <div>
                 <span>Payment Method</span>
-                <strong>{selectedPayment.paymentMethod || "—"}</strong>
+                <strong>{selectedPayment.paymentMethod || "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"}</strong>
               </div>
               <div>
                 <span>Transaction Date</span>

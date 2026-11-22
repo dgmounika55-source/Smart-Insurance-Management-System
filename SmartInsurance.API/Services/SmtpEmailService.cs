@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Mail;
 using SmartInsurance.API.Interfaces;
 
@@ -44,7 +44,8 @@ public class SmtpEmailService : IEmailService
         using var client = new SmtpClient(host, port)
         {
             EnableSsl = true,
-            Credentials = new NetworkCredential(username, password)
+            UseDefaultCredentials = false,
+            Credentials = new NetworkCredential(username.Trim(), password.Trim())
         };
 
         await client.SendMailAsync(message);

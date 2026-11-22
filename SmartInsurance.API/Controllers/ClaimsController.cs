@@ -66,7 +66,8 @@ public class ClaimsController : ControllerBase
             query = query.Where(c => c.CustomerId == customerId.Value);
         }
 
-        return Ok(await query.ToListAsync());
+        return Ok(await query.OrderByDescending(c => c.SubmissionDate)
+            .ThenByDescending(c => c.ClaimId).ToListAsync());
     }
 
     [HttpGet("{id:int}")]
@@ -110,6 +111,9 @@ public class ClaimsController : ControllerBase
 
         if (customerPolicy?.Policy == null)
             return BadRequest(new { message = "Invalid customer policy." });
+
+        if (request.IncidentDate.Date > DateTime.UtcNow.Date)
+            return BadRequest(new { message = "Incident date cannot be in the future." });
 
         if (request.ClaimAmount <= 0 ||
             request.ClaimAmount > customerPolicy.Policy.CoverageAmount ||
@@ -171,6 +175,9 @@ public class ClaimsController : ControllerBase
 
         if (claim.Status != "Submitted")
             return BadRequest(new { message = "Only submitted claims can be edited." });
+
+        if (request.IncidentDate.Date > DateTime.UtcNow.Date)
+            return BadRequest(new { message = "Incident date cannot be in the future." });
 
         if (request.ClaimAmount <= 0 ||
             string.IsNullOrWhiteSpace(request.Description))
@@ -234,12 +241,8 @@ public class ClaimsController : ControllerBase
 
         _notificationService.AddClaimCancelledNotification(claim);
 
-        _notificationService.AddClaimCancelledNotification(claim);
-
         await _context.SaveChangesAsync();
 
         return Ok(new { message = "Claim cancelled successfully." });
     }
 }
-
-

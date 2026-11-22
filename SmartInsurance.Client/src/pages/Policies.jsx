@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
-  ShieldCheck, Search, ShoppingCart, CreditCard, X, Plus, Pencil, Ban
+  ShieldCheck, Search, ShoppingCart, CreditCard, X, Plus, Pencil, Ban, HeartPulse, Users, CarFront, Plane, House, Shield
 } from "lucide-react";
 import api from "../services/api";
+import Toast from "../components/Toast";
 
 const emptyForm = {
   policyName: "",
@@ -14,6 +15,7 @@ const emptyForm = {
 
 export default function Policies() {
   const [policies, setPolicies] = useState([]);
+  const [customerPolicies, setCustomerPolicies] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -26,6 +28,7 @@ export default function Policies() {
   const [editingPolicy, setEditingPolicy] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [savingPolicy, setSavingPolicy] = useState(false);
+const [toast, setToast] = useState(null);
 
   const userRole = localStorage.getItem("userRole");
   const isCustomer = userRole === "Customer";
@@ -34,8 +37,14 @@ export default function Policies() {
   async function fetchPolicies() {
     try {
       setError("");
+
       const response = await api.get("/policies");
       setPolicies(response.data);
+
+      if (isCustomer) {
+        const purchasedResponse = await api.get("/customerpolicies/my");
+        setCustomerPolicies(purchasedResponse.data);
+      }
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -132,7 +141,10 @@ export default function Policies() {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
         });
-        setMessage("New policy created successfully.");
+        setToast({
+          type: "success",
+          message: "Your new insurance policy has been created successfully.",
+        });
       }
 
       setShowForm(false);
@@ -141,7 +153,7 @@ export default function Policies() {
       await fetchPolicies();
     } catch (err) {
       setError(
-        err.response?.data?.message ||
+        err.response?.data?.message || JSON.stringify(err.response?.data) || JSON.stringify(err.response?.data) ||
         "Unable to save policy. Please try again."
       );
     } finally {
@@ -166,7 +178,7 @@ export default function Policies() {
       await fetchPolicies();
     } catch (err) {
       setError(
-        err.response?.data?.message ||
+        err.response?.data?.message || JSON.stringify(err.response?.data) || JSON.stringify(err.response?.data) ||
         "Unable to deactivate policy. Please try again."
       );
     }
@@ -184,10 +196,20 @@ export default function Policies() {
 
       setPaymentSession(response.data);
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Unable to create payment session. Please try again."
-      );
+      console.error("Payment creation diagnostic:", {
+        status: err.response?.status,
+        response: err.response?.data,
+        message: err.message,
+        url: err.config?.url,
+        baseURL: err.config?.baseURL
+      });
+
+      setToast({
+        type: "error",
+        message:
+          err.response?.data?.message ||
+          `Payment request failed (${err.response?.status || "Network error"}): ${err.message}`,
+      });
     } finally {
       setPurchasingId(null);
     }
@@ -206,25 +228,36 @@ export default function Policies() {
         success,
       });
 
-      setMessage(
-        response.data.message +
-        (response.data.policyReference
-          ? ` Policy reference: ${response.data.policyReference}.`
-          : "")
-      );
+      const paymentStatus = response.data.status;
+
+      const paymentMessage = [
+        response.data.message,
+        response.data.transactionReference
+          ? `Transaction reference: ${response.data.transactionReference}.`
+          : "",
+        response.data.policyReference
+          ? `Policy reference: ${response.data.policyReference}.`
+          : "",
+      ].filter(Boolean).join(" ");
+
+      setToast({
+        type: paymentStatus === "Paid" ? "success" : "error",
+        message: paymentMessage,
+      });
 
       setPaymentSession(null);
       await fetchPolicies();
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Unable to process payment. Please try again."
-      );
+      setToast({
+        type: "error",
+        message:
+          err.response?.data?.message || JSON.stringify(err.response?.data) || JSON.stringify(err.response?.data) ||
+          "Unable to process payment. Please try again.",
+      });
     } finally {
       setPaymentProcessing(false);
     }
   }
-
   const filteredPolicies = policies.filter((policy) =>
     `${policy.policyNumber} ${policy.policyName} ${policy.policyType}`
       .toLowerCase()
@@ -233,8 +266,13 @@ export default function Policies() {
 
   return (
     <div className="page-section">
-      <div className="page-title-row">
+          <Toast
+      message={toast?.message}
+      type={toast?.type}
+      onClose={() => setToast(null)}
+    /><div className="page-title-row consistent-page-header">
         <div>
+          <div className="page-breadcrumb">INSURANCE / POLICIES</div>
           <h1>Insurance Policies</h1>
           <p>Explore insurance products and manage available policies.</p>
         </div>
@@ -290,7 +328,23 @@ export default function Policies() {
                 {filteredPolicies.map((policy) => (
                   <tr key={policy.policyId}>
                     <td className="claim-id">{policy.policyNumber}</td>
-                    <td className="customer-name">{policy.policyName}</td>
+                    <td>
+  <div className="policy-name-cell">
+    <span className={`policy-type-icon policy-type-${(policy.policyType || "other").toLowerCase()}`}>
+      {(() => {
+        const type = (policy.policyType || "").toLowerCase();
+        const Icon =
+          type === "health" ? HeartPulse :
+          type === "life" ? Users :
+          type === "motor" ? CarFront :
+          type === "travel" ? Plane :
+          type === "property" ? House : Shield;
+        return <Icon size={18} />;
+      })()}
+    </span>
+    <span className="customer-name">{policy.policyName}</span>
+  </div>
+</td>
                     <td>{policy.policyType}</td>
                     <td className="amount">{formatCurrency(policy.premiumAmount)}</td>
                     <td>{formatCurrency(policy.coverageAmount)}</td>
@@ -304,20 +358,31 @@ export default function Policies() {
 
                     {isCustomer && (
                       <td>
-                        <button
-                          type="button"
-                          className="primary-button"
-                          disabled={
-                            policy.status !== "Active" ||
-                            purchasingId === policy.policyId
-                          }
-                          onClick={() => handlePurchase(policy)}
-                        >
-                          <ShoppingCart size={15} />
-                          {purchasingId === policy.policyId
-                            ? "Processing..."
-                            : "Purchase"}
-                        </button>
+                        {customerPolicies.some(
+                          (item) =>
+                            Number(item.policyId ?? item.policy?.policyId) ===
+                            Number(policy.policyId)
+                        ) ? (
+                          <button type="button" className="secondary-button" disabled>
+                            Already Purchased
+                          </button>
+                        ) : policy.status !== "Active" ? (
+                          <button type="button" className="secondary-button" disabled>
+                            Unavailable
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="primary-button"
+                            disabled={purchasingId === policy.policyId}
+                            onClick={() => handlePurchase(policy)}
+                          >
+                            <ShoppingCart size={15} />
+                            {purchasingId === policy.policyId
+                              ? "Processing..."
+                              : "Purchase"}
+                          </button>
+                        )}
                       </td>
                     )}
 
@@ -421,7 +486,7 @@ export default function Policies() {
               </label>
 
               <label>
-                Premium Amount (₹)
+                Premium Amount (&#8377;)
                 <input
                   type="number"
                   name="premiumAmount"
@@ -434,7 +499,7 @@ export default function Policies() {
               </label>
 
               <label>
-                Coverage Amount (₹)
+                Coverage Amount (&#8377;)
                 <input
                   type="number"
                   name="coverageAmount"

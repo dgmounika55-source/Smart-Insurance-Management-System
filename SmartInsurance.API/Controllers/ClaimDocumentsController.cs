@@ -155,8 +155,8 @@ public class ClaimDocumentsController : ControllerBase
                 });
         }
 
-        if (string.IsNullOrWhiteSpace(documentType))
-            return BadRequest(new { message = "Document type is required." });
+        if (string.IsNullOrWhiteSpace(documentType) || documentType.Trim().Length > 50)
+            return BadRequest(new { message = "Document type is required and must not exceed 50 characters." });
 
         var uploadFolder = Path.Combine(
             _environment.ContentRootPath,
@@ -255,11 +255,13 @@ public class ClaimDocumentsController : ControllerBase
                 return BadRequest(new { message = "Documents can only be deleted while the claim is submitted." });
         }
 
-        if (System.IO.File.Exists(document.FilePath))
-            System.IO.File.Delete(document.FilePath);
+        var filePath = document.FilePath;
 
         _context.ClaimDocuments.Remove(document);
         await _context.SaveChangesAsync();
+
+        if (System.IO.File.Exists(filePath))
+            System.IO.File.Delete(filePath);
 
         return Ok(new { message = "Document deleted successfully." });
     }

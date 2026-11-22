@@ -35,18 +35,42 @@ export default function CustomerDashboard() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [policyResponse, claimResponse] = await Promise.all([
+        const results = await Promise.allSettled([
           api.get("/customerpolicies/my"),
           api.get("/claims")
         ]);
 
-        setPolicies(policyResponse.data);
-        setClaims(claimResponse.data);
+        const policyResult = results[0];
+        const claimResult = results[1];
+
+        if (policyResult.status === "fulfilled") {
+          setPolicies(policyResult.value.data);
+        }
+
+        if (claimResult.status === "fulfilled") {
+          setClaims(claimResult.value.data);
+        }
+
+        const failures = results
+          .map((result, index) => {
+            if (result.status === "fulfilled") return null;
+
+            const endpoint = index === 0
+              ? "/customerpolicies/my"
+              : "/claims";
+
+            const status = result.reason.response?.status || "Network error";
+            const message = result.reason.response?.data?.message || "";
+
+            return `${endpoint} failed (${status}) ${message}`;
+          })
+          .filter(Boolean);
+
+        if (failures.length) {
+          setError(failures.join(" | "));
+        }
       } catch (err) {
-        setError(
-          err.response?.data?.message ||
-          "Unable to load your account details. Please try again."
-        );
+        setError("Unable to load dashboard data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -130,12 +154,12 @@ export default function CustomerDashboard() {
 
   return (
     <>
-      <section className="welcome-row">
+      <section className="welcome-row consistent-page-header">
         <div>
-          <p className="eyebrow">CUSTOMER WORKSPACE</p>
-          <h1>Welcome, {localStorage.getItem("userName") || "Customer"}!</h1>
+          <p className="eyebrow">CUSTOMER WORKSPACE / DASHBOARD</p>
+          <h1>Dashboard Overview</h1>
           <p className="subtitle">
-            Manage your insurance policies and track your claims.
+            Welcome back, {localStorage.getItem("userName") || "Customer"}! Here's an overview of your insurance coverage and claims.
           </p>
         </div>
 
@@ -227,13 +251,11 @@ export default function CustomerDashboard() {
             )}
           </div>
 
-          <Link to="/policies" className="primary-button">
-            Explore Policies
-          </Link>
+
         </div>
       </section>
 
-      <section className="stats-grid">
+      <section className="stats-grid customer-stats-grid">
         <div className="stat-card">
           <div className="stat-icon blue"><ShieldCheck size={21} /></div>
           <p>Active Policies</p>
@@ -333,7 +355,7 @@ export default function CustomerDashboard() {
                   <td>
                     {claim.submissionDate
                       ? new Date(claim.submissionDate).toLocaleDateString("en-IN")
-                      : "Ã¢â‚¬â€"}
+                      : "ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â"}
                   </td>
                   <td>
                     <span className={`status ${claim.status?.toLowerCase()}`}>

@@ -54,7 +54,7 @@ public class PaymentsController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentRequest request)
     {
-        var email = User.FindFirstValue(ClaimTypes.Email);
+        var email = User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue("email");
 
         if (string.IsNullOrWhiteSpace(email))
             return Unauthorized(new { message = "Customer identity not found." });
@@ -114,68 +114,75 @@ public class PaymentsController : ControllerBase
     public async Task<IActionResult> CompletePayment(
         [FromBody] CompletePaymentRequest request)
     {
-        var email = User.FindFirstValue(ClaimTypes.Email);
+        if (request == null || request.PaymentId <= 0)
+            return BadRequest(new { message = "A valid payment ID is required." });
+
+        var email = User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue("email");
 
         if (string.IsNullOrWhiteSpace(email))
             return Unauthorized();
-
-        var payment = await _context.Payments
-            .Include(p => p.Customer)
-            .Include(p => p.Policy)
-            .FirstOrDefaultAsync(p => p.PaymentId == request.PaymentId);
-
-        if (payment == null)
-            return NotFound(new { message = "Payment transaction not found." });
-
-        if (payment.Customer?.Email != email)
-            return Forbid();
-
-        if (payment.Status == "Paid")
-        {
-            return Ok(new
-            {
-                message = "Payment was already completed.",
-                status = payment.Status,
-                transactionReference = payment.TransactionReference,
-                policyReference = payment.CustomerPolicy?.PolicyReference
-            });
-        }
-
-        if (payment.Status != "Pending")
-            return BadRequest(new { message = "This payment cannot be processed again." });
-
-        if (!request.Success)
-        {
-            payment.Status = "Failed";
-            await _context.SaveChangesAsync();
-
-            return Ok(new
-            {
-                message = "Payment failed. Your policy has not been activated.",
-                status = payment.Status
-            });
-        }
-
-        if (payment.Policy == null || payment.Policy.Status != "Active")
-            return BadRequest(new { message = "The selected policy is no longer available." });
-
-        var alreadyOwned = await _context.CustomerPolicies
-            .AnyAsync(cp =>
-                cp.CustomerId == payment.CustomerId &&
-                cp.PolicyId == payment.PolicyId &&
-                cp.Status == "Active" &&
-                cp.EndDate >= DateTime.UtcNow.Date);
-
-        if (alreadyOwned)
-            return Conflict(new
-            {
-                message = "You already have an active policy of this type. This payment cannot activate another one."
-            });
 
         await using var transaction = await _context.Database.BeginTransactionAsync();
 
         try
         {
+            var payment = await _context.Payments
+                .Include(p => p.Customer)
+                .Include(p => p.Policy)
+                .Include(p => p.CustomerPolicy)
+                .FirstOrDefaultAsync(p => p.PaymentId == request.PaymentId);
+
+            if (payment == null)
+                return NotFound(new { message = "Payment transaction not found." });
+
+            if (!string.Equals(payment.Customer?.Email, email, StringComparison.OrdinalIgnoreCase))
+                return Forbid();
+
+            if (payment.Status == "Paid")
+            {
+                await transaction.CommitAsync();
+
+                return Ok(new
+                {
+                    message = "Payment was already completed.",
+                    status = payment.Status,
+                    transactionReference = payment.TransactionReference,
+                    policyReference = payment.CustomerPolicy?.PolicyReference
+                });
+            }
+
+            if (payment.Status != "Pending")
+                return BadRequest(new { message = "This payment cannot be processed again." });
+
+            if (!request.Success)
+            {
+                payment.Status = "Failed";
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Ok(new
+                {
+                    message = "Payment failed. Your policy has not been activated.",
+                    status = payment.Status
+                });
+            }
+
+            if (payment.Policy == null || payment.Policy.Status != "Active")
+                return BadRequest(new { message = "The selected policy is no longer available." });
+
+            var alreadyOwned = await _context.CustomerPolicies
+                .AnyAsync(cp =>
+                    cp.CustomerId == payment.CustomerId &&
+                    cp.PolicyId == payment.PolicyId &&
+                    cp.Status == "Active" &&
+                    cp.EndDate >= DateTime.UtcNow.Date);
+
+            if (alreadyOwned)
+                return Conflict(new
+                {
+                    message = "You already have an active policy of this type. This payment cannot activate another one."
+                });
+
             var today = DateTime.UtcNow.Date;
 
             var customerPolicy = new CustomerPolicy

@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -59,10 +59,16 @@ builder.Services
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager();
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT key is not configured.");
+
+if (Encoding.UTF8.GetByteCount(jwtKey) < 32)
+{
+    throw new InvalidOperationException("JWT key must be at least 32 bytes long.");
+}
 
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]
     ?? throw new InvalidOperationException("JWT issuer is not configured.");
@@ -124,6 +130,24 @@ if (app.Environment.IsDevelopment())
 
         CREATE UNIQUE INDEX IF NOT EXISTS "IX_Payments_TransactionReference"
         ON "Payments" ("TransactionReference");
+
+        CREATE TABLE IF NOT EXISTS "SupportTickets" (
+            "TicketId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            "UserId" TEXT NOT NULL,
+            "UserName" TEXT NOT NULL,
+            "UserRole" TEXT NOT NULL,
+            "Subject" TEXT NOT NULL,
+            "Category" TEXT NOT NULL,
+            "Priority" TEXT NOT NULL,
+            "Description" TEXT NOT NULL,
+            "Status" TEXT NOT NULL DEFAULT 'Open',
+            "AdminResponse" TEXT NULL,
+            "CreatedAt" TEXT NOT NULL,
+            "UpdatedAt" TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS "IX_SupportTickets_UserId_CreatedAt"
+        ON "SupportTickets" ("UserId", "CreatedAt");
         """);
 
 

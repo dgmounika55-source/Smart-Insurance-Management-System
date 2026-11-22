@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SmartInsurance.API.DTOs;
@@ -39,7 +39,12 @@ public class ForgotPasswordController : ControllerBase
         var user = await _userManager.FindByEmailAsync(request.Email);
 
         if (user == null)
-            return Ok(new { message = responseMessage });
+        {
+            _logger.LogWarning("Password reset requested, but no matching account was found.");
+        return Ok(new { message = responseMessage });
+        }
+
+        _logger.LogInformation("Password reset account found. Generating reset token.");
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -74,6 +79,7 @@ public class ForgotPasswordController : ControllerBase
 
         try
         {
+            _logger.LogInformation("Attempting to send password reset email through SMTP.");
             await _emailService.SendEmailAsync(
                 user.Email!,
                 "InsureFlow - Password Reset",

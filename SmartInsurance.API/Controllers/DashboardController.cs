@@ -79,6 +79,7 @@ public class DashboardController : ControllerBase
         var claims = await _context.Claims
             .Include(c => c.Customer)
             .OrderByDescending(c => c.SubmissionDate)
+            .ThenByDescending(c => c.ClaimId)
             .Take(10)
             .Select(c => new
             {

@@ -33,3 +33,23 @@
 *.db
 *.db-shm
 *.db-wal
+
+# Development backups
+*.backup
+*.backup.*
+*.bak
+*.before-*
+*.before_*
+*.heading-backup
+*.icons-backup
+*.timeline-backup
+*.currency-backup
+*.notification-backup
+*.toast-backup
+*.global-search-backup
+PaymentsController.backup.txt
+
+# Additional timestamped and named backups
+*.backup*
+*.date-backup
+*.name-backup
