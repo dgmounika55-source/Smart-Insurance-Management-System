@@ -9,3 +9,8 @@ export const loginUser = async (credentials) => {
   const response = await api.post("/auth/login", credentials);
   return response.data;
 };
+
+export const confirmEmail = async (data) => {
+  const response = await api.post("/auth/confirm-email", data);
+  return response.data;
+};

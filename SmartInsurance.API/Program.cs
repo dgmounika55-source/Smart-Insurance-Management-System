@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +56,9 @@ builder.Services
         options.Password.RequireLowercase = true;
         options.Password.RequireNonAlphanumeric = true;
         options.User.RequireUniqueEmail = true;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -151,6 +154,59 @@ if (app.Environment.IsDevelopment())
         """);
 
 
+    // Add missing policy purchase snapshot columns to SQLite.
+    var connection = dbContext.Database.GetDbConnection();
+    await dbContext.Database.OpenConnectionAsync();
+
+    try
+    {
+        var columns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        await using (var command = connection.CreateCommand())
+        {
+            command.CommandText = "PRAGMA table_info('CustomerPolicies');";
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+                columns.Add(reader.GetString(1));
+        }
+
+        var definitions = new Dictionary<string, string>
+        {
+            ["PolicyNameSnapshot"] = "TEXT NOT NULL DEFAULT ''",
+            ["PolicyTypeSnapshot"] = "TEXT NOT NULL DEFAULT ''",
+            ["PremiumAmount"] = "TEXT NOT NULL DEFAULT '0'",
+            ["CoverageAmount"] = "TEXT NOT NULL DEFAULT '0'",
+            ["DurationMonths"] = "INTEGER NOT NULL DEFAULT 0"
+        };
+
+        foreach (var item in definitions)
+        {
+            if (!columns.Contains(item.Key))
+            {
+                await using var command = connection.CreateCommand();
+                command.CommandText = $"ALTER TABLE CustomerPolicies ADD COLUMN \"{item.Key}\" {item.Value};";
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+
+        await dbContext.Database.ExecuteSqlRawAsync("""
+            UPDATE CustomerPolicies
+            SET
+                PolicyNameSnapshot = (SELECT PolicyName FROM Policies WHERE Policies.PolicyId = CustomerPolicies.PolicyId),
+                PolicyTypeSnapshot = (SELECT PolicyType FROM Policies WHERE Policies.PolicyId = CustomerPolicies.PolicyId),
+                PremiumAmount = COALESCE(
+                    (SELECT Amount FROM Payments WHERE Payments.CustomerPolicyId = CustomerPolicies.CustomerPolicyId AND Payments.Status = 'Paid' ORDER BY PaidAt DESC LIMIT 1),
+                    (SELECT PremiumAmount FROM Policies WHERE Policies.PolicyId = CustomerPolicies.PolicyId),
+                    '0'),
+                CoverageAmount = (SELECT CoverageAmount FROM Policies WHERE Policies.PolicyId = CustomerPolicies.PolicyId),
+                DurationMonths = (SELECT DurationMonths FROM Policies WHERE Policies.PolicyId = CustomerPolicies.PolicyId)
+            WHERE PolicyNameSnapshot = '';
+            """);
+    }
+    finally
+    {
+        await dbContext.Database.CloseConnectionAsync();
+    }
     await RoleSeeder.SeedRolesAsync(scope.ServiceProvider);
     await ClaimsManagerSeeder.SeedAsync(scope.ServiceProvider);
     await AdminSeeder.SeedAsync(scope.ServiceProvider);
@@ -168,3 +224,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

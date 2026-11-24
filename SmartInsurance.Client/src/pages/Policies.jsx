@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShieldCheck, Search, ShoppingCart, CreditCard, X, Plus, Pencil, Ban, HeartPulse, Users, CarFront, Plane, House, Shield
 } from "lucide-react";
@@ -26,9 +26,11 @@ export default function Policies() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState(null);
+  const [previewPolicy, setPreviewPolicy] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [savingPolicy, setSavingPolicy] = useState(false);
 const [toast, setToast] = useState(null);
+  const [deactivateTarget, setDeactivateTarget] = useState(null);
 
   const userRole = localStorage.getItem("userRole");
   const isCustomer = userRole === "Customer";
@@ -73,6 +75,14 @@ const [toast, setToast] = useState(null);
     setError("");
     setMessage("");
     setShowForm(true);
+  }
+
+  function openPreview(policy) {
+    setPreviewPolicy(policy);
+  }
+
+  function closePreview() {
+    setPreviewPolicy(null);
   }
 
   function openEditForm(policy) {
@@ -164,11 +174,8 @@ const [toast, setToast] = useState(null);
   async function deactivatePolicy(policy) {
     if (policy.status !== "Active") return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to deactivate "${policy.policyName}"?`
-    );
-
-    if (!confirmed) return;
+    setDeactivateTarget(policy);
+    return;
 
     try {
       setError("");
@@ -184,6 +191,23 @@ const [toast, setToast] = useState(null);
     }
   }
 
+  async function confirmDeactivatePolicy() {
+    if (!deactivateTarget) return;
+
+    try {
+      setError("");
+      setMessage("");
+      await api.delete(`/policies/${deactivateTarget.policyId}`);
+      setMessage(`${deactivateTarget.policyName} has been deactivated.`);
+      setDeactivateTarget(null);
+      await fetchPolicies();
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        "Unable to deactivate policy. Please try again."
+      );
+    }
+  }
   async function handlePurchase(policy) {
     try {
       setPurchasingId(policy.policyId);
@@ -388,7 +412,14 @@ const [toast, setToast] = useState(null);
 
                     {isAdmin && (
                       <td>
-                        <div style={{ display: "flex", gap: 8 }}>
+                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                          <button
+                            type="button"
+                            className="secondary-button"
+                            onClick={() => openPreview(policy)}
+                          >
+                            <ShieldCheck size={14} /> Preview
+                          </button>
                           <button
                             type="button"
                             className="secondary-button"
@@ -425,7 +456,99 @@ const [toast, setToast] = useState(null);
         )}
       </div>
 
-      {showForm && (
+      {previewPolicy && (
+        <div className="checkout-overlay" onClick={closePreview}>
+          <div
+            className="checkout-modal policy-preview-modal"
+            style={{ maxWidth: 520 }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="checkout-header">
+              <div className="checkout-brand">
+                <div className="checkout-brand-icon">
+                  <ShieldCheck size={22} />
+                </div>
+                <div>
+                  <strong>InsureFlow</strong>
+                  <span>Policy Details</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="checkout-close"
+                onClick={closePreview}
+                aria-label="Close policy preview"
+              >
+                <X size={19} />
+              </button>
+            </div>
+
+            <div className="checkout-title">
+              <span className="checkout-eyebrow">POLICY PREVIEW</span>
+              <h2>{previewPolicy.policyName}</h2>
+              <p>Review the complete insurance policy information.</p>
+            </div>
+
+            <div className="policy-preview-details">
+              <div className="policy-preview-row">
+                <span>Policy Number</span>
+                <strong>{previewPolicy.policyNumber || "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â"}</strong>
+              </div>
+              <div className="policy-preview-row">
+                <span>Policy Type</span>
+                <strong>{previewPolicy.policyType || "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â"}</strong>
+              </div>
+              <div className="policy-preview-row">
+                <span>Status</span>
+                <span className={`status ${previewPolicy.status === "Active" ? "approved" : "rejected"}`}>
+                  {previewPolicy.status || "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â"}
+                </span>
+              </div>
+              <div className="policy-preview-row">
+                <span>Premium Amount</span>
+                <strong>{formatCurrency(previewPolicy.premiumAmount)}</strong>
+              </div>
+              <div className="policy-preview-row">
+                <span>Coverage Amount</span>
+                <strong>{formatCurrency(previewPolicy.coverageAmount)}</strong>
+              </div>
+              <div className="policy-preview-row policy-preview-duration">
+                <span>Duration</span>
+                <strong>{previewPolicy.durationMonths ?? "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â"} months</strong>
+              </div>
+            </div>
+
+            <div className="checkout-actions">
+              <button
+                type="button"
+                className="checkout-pay-button"
+                onClick={closePreview}
+              >
+                Close Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deactivateTarget && (
+  <div className="checkout-overlay" onClick={() => setDeactivateTarget(null)}>
+    <div className="checkout-modal policy-preview-modal" style={{ maxWidth: 380 }} onClick={(event) => event.stopPropagation()}>
+      <div className="checkout-title">
+        <h2>Deactivate Policy?</h2>
+        <p>Are you sure you want to deactivate <strong>{deactivateTarget.policyName}</strong>?</p>
+      </div>
+      <div className="checkout-actions">
+        <button type="button" className="secondary-button" onClick={() => setDeactivateTarget(null)}>
+          Cancel
+        </button>
+        <button type="button" className="checkout-pay-button" onClick={confirmDeactivatePolicy}>
+          Deactivate
+        </button>
+      </div>
+    </div>
+  </div>
+)}{showForm && (
         <div className="checkout-overlay">
           <div className="checkout-modal" style={{ maxWidth: 520 }}>
             <div className="checkout-header">
@@ -641,3 +764,6 @@ const [toast, setToast] = useState(null);
     </div>
   );
 }
+
+
+

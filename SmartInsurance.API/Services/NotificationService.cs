@@ -17,8 +17,8 @@ public class NotificationService
         _context.Notifications.Add(new Notification
         {
             CustomerId = claim.CustomerId,
-            ClaimId = claim.ClaimId,
-            Title = "Claim Submitted Successfully",
+            Claim = claim,
+            Title = "Claim Submitted",
             Message = $"Your claim {claim.ClaimNumber} has been submitted successfully. You can track its progress from your dashboard.",
             Type = "Success",
             IsRead = false,
@@ -31,7 +31,7 @@ public class NotificationService
         _context.Notifications.Add(new Notification
         {
             CustomerId = claim.CustomerId,
-            ClaimId = claim.ClaimId,
+            Claim = claim,
             Title = "Claim Cancelled",
             Message = $"Your claim {claim.ClaimNumber} has been cancelled successfully.",
             Type = "Information",
@@ -80,7 +80,7 @@ public class NotificationService
         _context.Notifications.Add(new Notification
         {
             CustomerId = claim.CustomerId,
-            ClaimId = claim.ClaimId,
+            Claim = claim,
             Title = title,
             Message = message,
             Type = type,

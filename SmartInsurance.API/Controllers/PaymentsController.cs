@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -193,7 +193,12 @@ public class PaymentsController : ControllerBase
                 PurchaseDate = DateTime.UtcNow,
                 StartDate = today,
                 EndDate = today.AddMonths(payment.Policy.DurationMonths),
-                Status = "Active"
+                Status = "Active",
+                PolicyNameSnapshot = payment.Policy.PolicyName,
+                PolicyTypeSnapshot = payment.Policy.PolicyType,
+                PremiumAmount = payment.Amount,
+                CoverageAmount = payment.Policy.CoverageAmount,
+                DurationMonths = payment.Policy.DurationMonths
             };
 
             _context.CustomerPolicies.Add(customerPolicy);
@@ -232,3 +237,4 @@ public class CompletePaymentRequest
     public int PaymentId { get; set; }
     public bool Success { get; set; }
 }
+

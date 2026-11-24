@@ -150,9 +150,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Policy>()
             .Property(p => p.CoverageAmount)
             .HasPrecision(18, 2);
+        builder.Entity<CustomerPolicy>().Property(cp => cp.PremiumAmount).HasPrecision(18, 2);
+        builder.Entity<CustomerPolicy>().Property(cp => cp.CoverageAmount).HasPrecision(18, 2);
+
 
         builder.Entity<Claim>()
             .Property(c => c.ClaimAmount)
             .HasPrecision(18, 2);
     }
 }
+

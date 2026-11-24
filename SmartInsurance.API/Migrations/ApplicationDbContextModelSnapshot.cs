@@ -392,7 +392,14 @@ namespace SmartInsurance.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerPolicyId"));
 
+                    b.Property<decimal>("CoverageAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DurationMonths")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
@@ -401,9 +408,21 @@ namespace SmartInsurance.API.Migrations
                     b.Property<int>("PolicyId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PolicyNameSnapshot")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PolicyReference")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PolicyTypeSnapshot")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PremiumAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");

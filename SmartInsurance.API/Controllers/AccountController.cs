@@ -98,6 +98,6 @@ public class AccountController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
 
-        return Ok(new { message = "Password changed successfully. Please log in again." });
+        return Ok(new { message = "Your password has been updated successfully. You can now sign in using your new password." });
     }
 }

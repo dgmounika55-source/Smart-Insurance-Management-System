@@ -34,7 +34,7 @@ public class ForgotPasswordController : ControllerBase
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
     {
         const string responseMessage =
-            "If an account exists for this email, password reset instructions will be sent.";
+            "If an account is registered with this email address, a password reset link has been sent.";
 
         var user = await _userManager.FindByEmailAsync(request.Email);
 

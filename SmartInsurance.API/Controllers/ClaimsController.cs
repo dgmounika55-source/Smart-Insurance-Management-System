@@ -152,6 +152,8 @@ public class ClaimsController : ControllerBase
             ChangedBy = User.Identity?.Name ?? "Customer"
         });
 
+        _notificationService.AddClaimSubmittedNotification(claim);
+
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetClaim), new { id = claim.ClaimId }, claim);

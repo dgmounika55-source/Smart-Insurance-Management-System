@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 * { box-sizing: border-box; }
 body { margin: 0; font-family: 'DM Sans', sans-serif; color: #202b3c; background: #f7f8fc; }
@@ -1215,7 +1215,7 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 
 /* ==========================================
-   INSUREFLOW â€” PREMIUM DARK NAVY THEME
+   INSUREFLOW — PREMIUM DARK NAVY THEME
    ========================================== */
 
 :root {
@@ -1590,7 +1590,7 @@ button:disabled { opacity: .5; }
 }
 
 
-/* DARK THEME â€” HOVER STATE FIXES */
+/* DARK THEME — HOVER STATE FIXES */
 
 .nav-link:hover,
 .nav-link.active:hover,
@@ -1818,7 +1818,7 @@ select:hover {
 }
 
 
-/* INSUREFLOW CLAIMS â€” DARK NAVY THEME */
+/* INSUREFLOW CLAIMS — DARK NAVY THEME */
 .page-section .claim-form-panel,
 .page-section .claim-form,
 .page-section .claim-history,
@@ -3866,3 +3866,423 @@ html, body, #root, .app-layout, .main-content, .page-content, .sidebar {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Notification dropdown dark-theme text fix */
+.notification-dropdown {
+  background: #101a2e;
+  color: #f1f5ff;
+  border: 1px solid #24334d;
+}
+
+.notification-dropdown .notification-heading h3,
+.notification-dropdown .notification-item-content strong {
+  color: #f1f5ff !important;
+}
+
+.notification-dropdown .notification-heading p,
+.notification-dropdown .notification-item-content p {
+  color: #c5d1e3 !important;
+}
+
+.notification-dropdown .notification-item-content small {
+  color: #94a3b8 !important;
+}
+
+.notification-dropdown .notification-item.unread {
+  background: #172b49;
+}
+
+.notification-dropdown .notification-item {
+  border-bottom-color: #24334d;
+}
+
+
+
+/* Submitted claim status badge */
+.status.submitted {
+  background: #fff5e8;
+  color: #d99442;
+}
+
+/* Submitted badge - dark theme */
+.dark .status.submitted {
+  background: #45351f;
+  color: #ffd18a;
+}
+
+/* Claim action confirmation modal */
+.claim-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 18, 32, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.claim-modal {
+  width: 100%;
+  max-width: 480px;
+  padding: 26px;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #172033;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: claimModalIn 0.2s ease-out;
+}
+
+.claim-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.claim-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.claim-modal-close {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.claim-modal > p {
+  margin: 0 0 20px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.claim-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.claim-modal-field label {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.claim-modal-field textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #172033;
+  font: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.claim-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.claim-modal-actions button {
+  min-width: 110px;
+  padding: 11px 18px;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.claim-modal-cancel {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+}
+
+.claim-modal-confirm {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.claim-modal-actions button:disabled,
+.claim-modal-close:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark .claim-modal {
+  background: #142238;
+  color: #f1f5f9;
+}
+
+.dark .claim-modal > p {
+  color: #c1ccdc;
+}
+
+.dark .claim-modal-field textarea {
+  background: #0d192b;
+  border-color: #34445c;
+  color: #f1f5f9;
+}
+
+.dark .claim-modal-cancel {
+  background: #1d304a;
+  border-color: #40516b;
+  color: #e2e8f0;
+}
+
+@keyframes claimModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .claim-modal {
+    padding: 20px;
+  }
+
+  .claim-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .claim-modal-actions button {
+    width: 100%;
+  }
+}
+
+/* Professional Customers table headers */
+.page-section .table-wrap table thead th {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  color: #334155;
+  background: #f1f5f9;
+  padding: 16px 14px;
+  border-bottom: 2px solid #cbd5e1;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.dark .page-section .table-wrap table thead th {
+  color: #e2e8f0;
+  background: #1b2a40;
+  border-bottom-color: #3a4b63;
+}
+
+
+/* Policy Preview modal details */
+.policy-preview-modal .policy-preview-details {
+  display: grid;
+  gap: 0;
+  margin: 20px 0;
+  padding: 6px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.policy-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.policy-preview-row:last-child {
+  border-bottom: none;
+}
+
+.policy-preview-row > span:first-child {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.policy-preview-row strong {
+  color: #172033;
+  font-size: 14px;
+  font-weight: 750;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.dark .policy-preview-modal .policy-preview-details {
+  background: #0d192b;
+  border-color: #34445c;
+}
+
+.dark .policy-preview-row {
+  border-bottom-color: #34445c;
+}
+
+.dark .policy-preview-row > span:first-child {
+  color: #aebdd0;
+}
+
+.dark .policy-preview-row strong {
+  color: #f1f5f9;
+}
+
+@media (max-width: 480px) {
+  .policy-preview-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .policy-preview-row strong {
+    text-align: left;
+  }
+}
+
+
+/* Fix Policy Preview white row in Dark Mode */
+.dark .policy-preview-modal .policy-preview-row,
+.dark .policy-preview-modal .policy-preview-row:last-child {
+  background: transparent !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .policy-preview-modal .policy-preview-row strong {
+  background: transparent !important;
+  color: #f1f5f9 !important;
+}
+.dark .policy-preview-duration,
+.dark .policy-preview-duration strong {
+  background: #0d192b !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .policy-preview-duration {
+  border-bottom-color: #34445c !important;
+}
+
+/* Policy Preview - force dark details panel */
+.checkout-modal.policy-preview-modal .policy-preview-details {
+  background: #0d192b !important;
+  border: 1px solid #34445c !important;
+}
+
+.checkout-modal.policy-preview-modal .policy-preview-row {
+  background: transparent !important;
+}
+
+.checkout-modal.policy-preview-modal .policy-preview-row > span:first-child {
+  color: #aebdd0 !important;
+}
+
+.checkout-modal.policy-preview-modal .policy-preview-row strong {
+  background: transparent !important;
+  color: #f1f5f9 !important;
+}
+
+/* Policy Preview - force dark details panel */
+.checkout-modal.policy-preview-modal .policy-preview-details {
+  background: #0d192b !important;
+  border: 1px solid #34445c !important;
+}
+
+.checkout-modal.policy-preview-modal .policy-preview-row {
+  background: transparent !important;
+}
+
+.checkout-modal.policy-preview-modal .policy-preview-row > span:first-child {
+  color: #aebdd0 !important;
+}
+
+.checkout-modal.policy-preview-modal .policy-preview-row strong {
+  background: transparent !important;
+  color: #f1f5f9 !important;
+}
+
+/* Remove separator lines from Policy Preview */
+.checkout-modal.policy-preview-modal .policy-preview-row,
+.checkout-modal.policy-preview-modal .policy-preview-row:last-child {
+  border-bottom: none !important;
+}
+
+/* Compact and professional Policy Preview modal */
+.checkout-modal.policy-preview-modal {
+  width: calc(100% - 32px) !important;
+  max-width: 440px !important;
+  max-height: 82vh !important;
+  padding: 20px !important;
+  overflow-y: auto;
+}
+
+.policy-preview-modal .policy-preview-details {
+  margin: 14px 0 !important;
+  padding: 4px 14px !important;
+}
+
+.policy-preview-modal .policy-preview-row {
+  padding: 10px 0 !important;
+  gap: 12px !important;
+}
+
+.policy-preview-modal .policy-preview-row > span:first-child {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+.policy-preview-modal .policy-preview-row strong {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+.policy-preview-modal .checkout-actions {
+  margin-top: 12px !important;
+}
+
+
+/* Reduce Policy Preview header spacing */
+.policy-preview-modal .checkout-header {
+  margin-bottom: 8px !important;
+  padding-bottom: 0 !important;
+}
+
+.policy-preview-modal .checkout-title {
+  margin: 6px 0 12px !important;
+  padding: 0 !important;
+  gap: 4px !important;
+}
+
+.policy-preview-modal .checkout-title .checkout-eyebrow {
+  display: block;
+  margin: 0 0 3px !important;
+  font-size: 10px !important;
+}
+
+.policy-preview-modal .checkout-title h2 {
+  margin: 0 0 4px !important;
+  font-size: 21px !important;
+  line-height: 1.25 !important;
+}
+
+.policy-preview-modal .checkout-title p {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+
+.checkout-modal.policy-preview-modal:has(.checkout-title h2) { width: 320px !important; max-width: 320px !important; padding: 20px !important; }

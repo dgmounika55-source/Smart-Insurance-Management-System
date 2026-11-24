@@ -9,6 +9,7 @@ import {
   ChevronUp
 } from "lucide-react";
 import api from "../services/api";
+import Toast from "../components/Toast";
 
 export default function Claims() {
   const userRole = localStorage.getItem("userRole");
@@ -20,6 +21,10 @@ export default function Claims() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [toast, setToast] = useState(null);
+  const [claimModal, setClaimModal] = useState(null);
+  const [modalRemarks, setModalRemarks] = useState("");
+  const [modalSubmitting, setModalSubmitting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [expandedClaim, setExpandedClaim] = useState(null);
@@ -122,7 +127,7 @@ export default function Claims() {
 
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
-      window.alert("Unable to download this document.");
+      setToast({ type: "error", title: "Download Failed", message: "Unable to download this document." });
     }
   }
   async function loadClaimDocuments(claimId) {
@@ -142,87 +147,75 @@ export default function Claims() {
         [claimId]: response.data
       }));
     } catch (err) {
-      window.alert(
-        err.response?.data?.message ||
-        "Unable to load claim documents."
-      );
+      setToast({ type: "error", title: "Document Loading Failed", message: err.response?.data?.message || "Unable to load claim documents." });
     } finally {
       setDocumentsLoading(null);
     }
   }
-  async function cancelClaim(claimId) {
-    const confirmed = window.confirm(
-      "Are you sure you want to cancel this claim?"
-    );
-
-    if (!confirmed) return;
-
-    try {
-      setError("");
-      setMessage("");
-
-      const response = await api.patch(`/claims/${claimId}/cancel`);
-
-      setMessage(
-        response.data?.message || "Claim cancelled successfully."
-      );
-
-      setHistoryByClaim(previous => {
-        const updated = { ...previous };
-        delete updated[claimId];
-        return updated;
-      });
-
-      await fetchData();
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Unable to cancel this claim."
-      );
-    }
+  function openClaimModal(claimId, action) {
+    setClaimModal({ claimId, action });
+    setModalRemarks("");
   }
 
-  async function reviewClaim(claimId, action) {
-    const actionLabels = {
-      review: "start reviewing",
-      approve: "approve",
-      reject: "reject",
-      "request-documents": "request additional documents for"
-    };
+  async function submitClaimAction() {
+    if (!claimModal || modalSubmitting) return;
 
-    const actionLabel = actionLabels[action];
-    if (!actionLabel) return;
+    const { claimId, action } = claimModal;
+    const needsRemarks = ["approve", "reject", "request-documents"].includes(action);
 
-    let remarks = "";
-
-    if (action !== "review") {
-      remarks = window.prompt(
-        `Enter remarks to ${actionLabel} claim #${claimId}:`
-      );
-
-      if (remarks === null) return;
-
-      if (!remarks.trim()) {
-        window.alert("Remarks are required.");
-        return;
-      }
-    }
-
-    if (!window.confirm(`Are you sure you want to ${actionLabel} claim #${claimId}?`)) {
+    if (needsRemarks && !modalRemarks.trim()) {
+      setToast({
+        type: "error",
+        title: "Remarks Required",
+        message: "Please enter remarks before continuing."
+      });
       return;
     }
 
     try {
-      await api.patch(
-        `/claimreviews/${claimId}/${action}`,
-        action === "review" ? {} : JSON.stringify(remarks),
-        action === "review" ? {} : {
-          headers: { "Content-Type": "application/json" }
-        }
-      );
+      setModalSubmitting(true);
 
-      window.alert("Claim status updated successfully.");
+      if (action === "cancel") {
+        const response = await api.patch(`/claims/${claimId}/cancel`);
+        setToast({
+          type: "success",
+          title: "Claim Cancelled",
+          message: response.data?.message || "The claim was cancelled successfully."
+        });
+      } else {
+        await api.patch(
+          `/claimreviews/${claimId}/${action}`,
+          action === "review" ? {} : JSON.stringify(modalRemarks.trim()),
+          action === "review" ? {} : {
+            headers: { "Content-Type": "application/json" }
+          }
+        );
+
+        const titles = {
+          review: "Review Started",
+          approve: "Claim Approved",
+          reject: "Claim Rejected",
+          "request-documents": "Documents Requested"
+        };
+
+        const messages = {
+          review: "The claim is now under review.",
+          approve: "The claim was approved successfully.",
+          reject: "The claim was rejected successfully.",
+          "request-documents": "Additional documents have been requested."
+        };
+
+        setToast({
+          type: "success",
+          title: titles[action],
+          message: messages[action]
+        });
+      }
+
+      setClaimModal(null);
+      setModalRemarks("");
       setExpandedClaim(null);
+
       setHistoryByClaim(previous => {
         const updated = { ...previous };
         delete updated[claimId];
@@ -231,9 +224,13 @@ export default function Claims() {
 
       await fetchData();
     } catch (error) {
-      window.alert(
-        error.response?.data?.message || "Unable to update claim status."
-      );
+      setToast({
+        type: "error",
+        title: "Action Failed",
+        message: error.response?.data?.message || "Unable to update the claim."
+      });
+    } finally {
+      setModalSubmitting(false);
     }
   }
   async function uploadRequestedDocuments(claimId) {
@@ -241,12 +238,12 @@ export default function Claims() {
     const documentType = requestedDocumentTypes[claimId] || "Additional Document";
 
     if (selectedFiles.length === 0) {
-      window.alert("Please select at least one document.");
+      setToast({ type: "error", title: "No Documents Selected", message: "Please select at least one document." });
       return;
     }
 
     if (selectedFiles.some(file => file.size > 5 * 1024 * 1024)) {
-      window.alert("Each document must be smaller than 5 MB.");
+      setToast({ type: "error", title: "File Size Limit", message: "Each document must be smaller than 5 MB." });
       return;
     }
 
@@ -271,10 +268,7 @@ export default function Claims() {
       }));
       setExpandedClaim(null);
     } catch (error) {
-      window.alert(
-        error.response?.data?.message ||
-        "Unable to upload the additional documents."
-      );
+      setToast({ type: "error", title: "Upload Failed", message: error.response?.data?.message || "Unable to upload the additional documents." });
     } finally {
       setUploadingRequested(null);
     }
@@ -339,11 +333,13 @@ export default function Claims() {
         }
       }
 
-      setMessage(
-        uploadFailed
+      setToast({
+        type: uploadFailed ? "error" : "success",
+        title: uploadFailed ? "Claim Submitted with Document Issue" : "Claim Submission Confirmed",
+        message: uploadFailed
           ? `Claim ${response.data.claimNumber} submitted, but one or more documents could not be uploaded.`
-          : `Claim ${response.data.claimNumber} submitted successfully!`
-      );
+          : `Your claim ${response.data.claimNumber} has been submitted successfully. You can track its status and updates from your dashboard.`
+      });
 
       setForm({
         customerPolicyId: "",
@@ -397,10 +393,80 @@ export default function Claims() {
       : "N/A";
 
   const statusClass = status =>
-    status?.toLowerCase().replace(/\s+/g, "-") || "pending";
+    status?.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase().replace(/\s+/g, "-") || "pending";
 
   return (
     <div className="page-section">
+      <Toast message={toast?.message} type={toast?.type} title={toast?.title} onClose={() => setToast(null)} />
+      {claimModal && (
+        <div className="claim-modal-overlay">
+          <div className="claim-modal">
+            <div className="claim-modal-header">
+              <h2>
+                {{
+                  cancel: "Cancel Claim",
+                  review: "Start Claim Review",
+                  approve: "Approve Claim",
+                  reject: "Reject Claim",
+                  "request-documents": "Request Additional Documents"
+                }[claimModal.action]}
+              </h2>
+              <button
+                type="button"
+                className="claim-modal-close"
+                onClick={() => setClaimModal(null)}
+                disabled={modalSubmitting}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <p>
+              {{
+                cancel: "Are you sure you want to cancel this claim?",
+                review: "Confirm that you want to start reviewing this claim.",
+                approve: "Confirm approval of this claim.",
+                reject: "Confirm rejection of this claim.",
+                "request-documents": "Enter the additional documents or information required from the customer."
+              }[claimModal.action]}
+            </p>
+
+            {["approve", "reject", "request-documents"].includes(claimModal.action) && (
+              <div className="claim-modal-field">
+                <label htmlFor="claim-modal-remarks">Remarks</label>
+                <textarea
+                  id="claim-modal-remarks"
+                  value={modalRemarks}
+                  onChange={event => setModalRemarks(event.target.value)}
+                  placeholder="Enter your remarks..."
+                  rows={4}
+                  disabled={modalSubmitting}
+                />
+              </div>
+            )}
+
+            <div className="claim-modal-actions">
+              <button
+                type="button"
+                className="claim-modal-cancel"
+                onClick={() => setClaimModal(null)}
+                disabled={modalSubmitting}
+              >
+                Go Back
+              </button>
+              <button
+                type="button"
+                className="claim-modal-confirm"
+                onClick={submitClaimAction}
+                disabled={modalSubmitting}
+              >
+                {modalSubmitting ? "Processing..." : "Confirm"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="page-title-row">
         <div>
           <h1>Claims Management</h1>
@@ -461,7 +527,7 @@ export default function Claims() {
             </div>
 
             <div className="form-group">
-              <label>Claim Amount (₹) *</label>
+              <label>Claim Amount (â‚¹) *</label>
               <input
                 type="number"
                 name="claimAmount"
@@ -619,7 +685,7 @@ export default function Claims() {
                             <button
                               type="button"
                               className="cancel-claim-button"
-                              onClick={() => cancelClaim(claim.claimId)}
+                              onClick={() => openClaimModal(claim.claimId, "cancel")}
                             >
                               Cancel Claim
                             </button>
@@ -632,7 +698,7 @@ export default function Claims() {
                                 <button
                                   type="button"
                                   className="review-action-button"
-                                  onClick={() => reviewClaim(claim.claimId, "review")}
+                                  onClick={() => openClaimModal(claim.claimId, "review")}
                                 >
                                   Start Review
                                 </button>
@@ -643,7 +709,7 @@ export default function Claims() {
                                   <button
                                     type="button"
                                     className="review-action-button approve-action"
-                                    onClick={() => reviewClaim(claim.claimId, "approve")}
+                                    onClick={() => openClaimModal(claim.claimId, "approve")}
                                   >
                                     Approve
                                   </button>
@@ -651,7 +717,7 @@ export default function Claims() {
                                   <button
                                     type="button"
                                     className="review-action-button reject-action"
-                                    onClick={() => reviewClaim(claim.claimId, "reject")}
+                                    onClick={() => openClaimModal(claim.claimId, "reject")}
                                   >
                                     Reject
                                   </button>
@@ -659,7 +725,7 @@ export default function Claims() {
                                   <button
                                     type="button"
                                     className="review-action-button"
-                                    onClick={() => reviewClaim(claim.claimId, "request-documents")}
+                                    onClick={() => openClaimModal(claim.claimId, "request-documents")}
                                   >
                                     Request Documents
                                   </button>
@@ -759,7 +825,7 @@ export default function Claims() {
 
                                     <small>
                                       {new Date(item.changedAt).toLocaleString("en-IN")}
-                                      {item.changedBy && ` • ${item.changedBy}`}
+                                      {item.changedBy && ` â€¢ ${item.changedBy}`}
                                     </small>
                                   </div>
                                 </div>
@@ -846,3 +912,9 @@ export default function Claims() {
     </div>
   );
 }
+
+
+
+
+
+

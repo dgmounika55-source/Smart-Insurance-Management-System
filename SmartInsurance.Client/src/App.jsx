@@ -18,6 +18,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 import api from "./services/api";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
@@ -404,6 +405,7 @@ function AppContent() {
   if (location.pathname === "/register") return <Register />;
   if (location.pathname === "/forgot-password") return <ForgotPassword />;
   if (location.pathname === "/reset-password") return <ResetPassword />;
+  if (location.pathname === "/verify-email") return <VerifyEmail />;
 
   if (!token) return <Navigate to="/login" replace />;
 
