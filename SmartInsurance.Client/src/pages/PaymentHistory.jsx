@@ -93,7 +93,7 @@ export default function PaymentHistory() {
         <p className="page-message error-message">{error}</p>
       ) : (
         <>
-          <section className="stats-grid">
+          <section className="stats-grid payment-history-stats">
             <div className="stat-card">
               <div className="stat-top">
                 <div className="stat-icon green"><CheckCircle2 size={21} /></div>

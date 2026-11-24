@@ -3825,3 +3825,44 @@ html, body, #root, .app-layout, .main-content, .page-content, .sidebar {
   border-color: #55c9bb;
   color: #ffffff;
 }
+
+/* Compact horizontal cards - Payment History only */
+.payment-history-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin-bottom: 20px;
+}
+
+.payment-history-stats .stat-card {
+  padding: 12px 16px !important;
+  min-width: 0;
+}
+
+.payment-history-stats .stat-top {
+  margin-bottom: 8px;
+}
+
+.payment-history-stats .stat-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.payment-history-stats .stat-card > p {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.payment-history-stats .stat-card h2 {
+  font-size: 21px;
+  margin-bottom: 3px;
+}
+
+.payment-history-stats .stat-note {
+  font-size: 10px;
+}
+
+@media (max-width: 600px) {
+  .payment-history-stats {
+    grid-template-columns: 1fr !important;
+  }
+}
